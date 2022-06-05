@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import UserHome from "./components/inbox/UserHome";
+import Home from "./components/Home";
+import Start from "./components/Start";
+import Pending from "./components/inbox/Pending";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />}>
+            <Route index element={<Start />} />
+          </Route>
+          <Route path="home" element={<UserHome />}>
+            <Route index element={<Pending />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </LocalizationProvider>
   );
 }
 
