@@ -44,7 +44,7 @@ const Home = () => {
   return (
     <Box sx={styles.body}>
       <AppBar position="static">
-        <Container>
+        <Container maxWidth="md">
           <Toolbar>
             <EventNote sx={styles.logo} />
             <Typography variant="h6">Transaction Scheduler</Typography>
@@ -74,12 +74,7 @@ const Home = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      <Dialog
-        open={isAbout}
-        onClose={() => setIsAbout(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={isAbout} onClose={() => setIsAbout(false)} maxWidth="md">
         <DialogTitle sx={styles.aboutDialogTitle}>About</DialogTitle>
         <DialogContent>
           <Typography variant="body1" mt={1}>
@@ -98,8 +93,7 @@ const Home = () => {
       <Dialog
         open={isLoginAdmin}
         onClose={() => setIsLoginAdmin(false)}
-        maxWidth="xs"
-        fullWidth
+        maxWidth="md"
       >
         <DialogTitle sx={styles.adminDialogTitle}>Admin</DialogTitle>
         <DialogContent>
@@ -125,23 +119,18 @@ const Home = () => {
           </Box>
         </DialogContent>
       </Dialog>
-      <Dialog
-        open={isLogin}
-        onClose={() => setIsLogin(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={isLogin} onClose={() => setIsLogin(false)} maxWidth="md">
         <DialogTitle sx={styles.dialogTitle}>Login</DialogTitle>
         <DialogContent>
-          <Grid container mt={1} gap={1}>
-            <Grid item xs={12} md>
+          <Grid container mt={1} spacing={1}>
+            <Grid item xs={12}>
               <Typography variant="h6">First Name:</Typography>
               <TextField
                 fullWidth
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} md>
+            <Grid item xs={12}>
               <Typography variant="h6">Last Name:</Typography>
               <TextField
                 fullWidth
@@ -149,14 +138,14 @@ const Home = () => {
               />
             </Grid>
           </Grid>
-          <Grid container mt={2} gap={1}>
-            <Grid item xs={12} md>
+          <Grid container spacing={1} sx={{ mt: 1 }}>
+            <Grid item xs={7}>
               <FormControlLabel
                 control={<Switch />}
                 label="Are you a CHMSU student?"
               />
             </Grid>
-            <Grid item xs={12} md>
+            <Grid item xs={5}>
               <Button
                 color="secondary"
                 variant="contained"

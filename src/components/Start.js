@@ -24,7 +24,7 @@ const Start = () => {
               mb={2}
             >
               CIT Dean, BSIS Program Chair, Guidance Counselor, <br /> and
-              Office of the Student Affair's office.
+              Office of the Student Affair
             </Typography>
             <Button
               size="large"
@@ -50,7 +50,7 @@ const styles = {
     height: "100%",
   },
   leftBox: {
-    width: "500px",
+    width: { xs: "fit-content", md: "500px" },
     whiteSpace: "nowrap",
     zIndex: 2,
   },

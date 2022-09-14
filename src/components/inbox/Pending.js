@@ -37,7 +37,7 @@ const Pending = () => {
                 sx={{ bgcolor: "primary.light" }}
               >
                 <Typography width="40%" fontWeight={600}>
-                  This Week
+                  This Month
                 </Typography>
                 <Typography variant="subtitle2" sx={styles.summary}>
                   2 requests
@@ -90,32 +90,6 @@ const Pending = () => {
                   </ListItemButton>
                 </List>
               </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{ bgcolor: "primary.light" }}
-              >
-                <Typography width="40%" fontWeight={600}>
-                  Last Week
-                </Typography>
-                <Typography variant="subtitle2" sx={styles.summary}>
-                  0 requests
-                </Typography>
-              </AccordionSummary>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{ bgcolor: "primary.light" }}
-              >
-                <Typography width="40%" fontWeight={600}>
-                  This Month
-                </Typography>
-                <Typography variant="subtitle2" sx={styles.summary}>
-                  0 requests
-                </Typography>
-              </AccordionSummary>
             </Accordion>
             <Accordion>
               <AccordionSummary
