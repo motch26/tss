@@ -6,9 +6,6 @@ import {
   Menu,
 } from "@mui/icons-material";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   AppBar,
   Avatar,
   Box,
@@ -22,7 +19,6 @@ import {
   Grid,
   IconButton,
   List,
-  ListItem,
   ListItemButton,
   MenuItem,
   Select,
@@ -31,6 +27,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import OSA from "./forms/OSA";
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -44,18 +41,14 @@ const StudentHome = () => {
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const [osaComplainant, setOsaComplainant] = useState("");
-  const [osaRespondent, setOsaRespondent] = useState("");
-  const [osaAcademicYr, setOsaAcademicYr] = useState(new Date());
-  const [osaAcademicYrEnd, setOsaAcademicYrEnd] = useState(new Date());
-  const [osaDateTimeIncident, setOsaDateTimeIncident] = useState(new Date());
-  const [osaPlace, setOsaPlace] = useState("");
-
   return (
     <Box sx={styles.body}>
       <Dialog
         open={isCompose}
-        onClose={() => setCompose(false)}
+        onClose={() => {
+          setTo("");
+          setCompose(false);
+        }}
         maxWidth="sm"
         fullWidth
       >
@@ -99,71 +92,7 @@ const StudentHome = () => {
               </Grid>
             </Grid>
           </Grid>
-          {to === "osa" ? (
-            <Box sx={{ mt: 1, width: "100%" }}>
-              <Typography variant="h6" sx={{ textAlign: "center" }}>
-                Incident Report Form
-              </Typography>
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <strong>Name of Complainant</strong>
-                  <TextField
-                    value={osaComplainant}
-                    onChange={(e) => setOsaComplainant(e.target.value)}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <strong>Name of Respondent</strong>
-                  <TextField
-                    value={osaRespondent}
-                    onChange={(e) => setOsaRespondent(e.target.value)}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <strong>Academic Year Start</strong>
-                  <DatePicker
-                    views={["year"]}
-                    value={osaAcademicYr}
-                    onChange={(val) => setOsaAcademicYr(val)}
-                    renderInput={(params) => (
-                      <TextField fullWidth {...params} />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <strong>Academic Year End</strong>
-                  <DatePicker
-                    views={["year"]}
-                    value={osaAcademicYrEnd}
-                    onChange={(val) => setOsaAcademicYrEnd(val)}
-                    renderInput={(params) => (
-                      <TextField fullWidth {...params} />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <strong>Date/Time of Incident</strong>
-                  <DateTimePicker
-                    value={osaDateTimeIncident}
-                    onChange={(val) => setOsaDateTimeIncident(val)}
-                    renderInput={(params) => (
-                      <TextField fullWidth {...params} />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <strong>Place of Incident</strong>
-                  <TextField
-                    fullWidth
-                    value={osaPlace}
-                    onChange={(e) => setOsaPlace(e.target.value)}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-          ) : null}
+          {to === "osa" ? <OSA /> : null}
           <Button
             variant="contained"
             color="secondary"
