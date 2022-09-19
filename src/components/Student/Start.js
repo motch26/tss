@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Divider,
   FormControlLabel,
   Grid,
   Switch,
@@ -17,9 +18,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const StudentStart = () => {
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(false);
@@ -29,8 +30,8 @@ const Home = () => {
   const [adminPass, setAdminPass] = useState("");
   const [isPassWrong, setPassWrong] = useState(false);
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const checkAdminPass = () => {
     if (adminPass === "admin123") setPassWrong(false);
@@ -38,7 +39,7 @@ const Home = () => {
   };
 
   const login = () => {
-    navigate("/home");
+    navigate("/student/home");
   };
 
   return (
@@ -55,13 +56,6 @@ const Home = () => {
                 onClick={() => setIsAbout(true)}
               >
                 About
-              </Button>
-              <Button
-                color="inherit"
-                sx={styles.btns}
-                onClick={() => setIsLoginAdmin(true)}
-              >
-                Admin
               </Button>
             </ButtonGroup>
             <Button
@@ -124,42 +118,71 @@ const Home = () => {
         <DialogContent>
           <Grid container mt={1} spacing={1}>
             <Grid item xs={12}>
-              <Typography variant="h6">First Name:</Typography>
+              <Typography variant="h6">Username:</Typography>
               <TextField
                 fullWidth
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h6">Last Name:</Typography>
+              <Typography variant="h6">Password:</Typography>
               <TextField
+                type="password"
                 fullWidth
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
           </Grid>
-          <Grid container spacing={1} sx={{ mt: 1 }}>
-            <Grid item xs={7}>
-              <FormControlLabel
-                control={<Switch />}
-                label="Are you a CHMSU student?"
-              />
-            </Grid>
-            <Grid item xs={5}>
-              <Button
-                color="secondary"
-                variant="contained"
-                sx={styles.loginBtn}
-                onClick={login}
-              >
-                Login via Google
-              </Button>
-            </Grid>
-          </Grid>
+
+          <Box sx={{ display: "flex", pt: 1 }}>
+            <Button
+              color="secondary"
+              variant="contained"
+              sx={styles.loginBtn}
+              onClick={login}
+            >
+              Login
+            </Button>
+          </Box>
         </DialogContent>
       </Dialog>
       <Box sx={styles.content}>
-        <Outlet context={[setIsLogin]} />
+        <Box sx={styles.mainBox}>
+          <Container sx={{ height: "100%" }}>
+            <Box sx={styles.centerBox}>
+              <Box sx={styles.leftBox}>
+                <Typography variant="h3" fontWeight={600} color="white">
+                  Transaction Scheduler
+                </Typography>
+                <Typography variant="h2" color="white">
+                  For CHMSU Offices
+                </Typography>
+                <Divider />
+                <Typography
+                  variant="h5"
+                  fontWeight={300}
+                  color="white"
+                  mt={3}
+                  mb={2}
+                >
+                  CIT Dean, BSIS Program Chair, Guidance Counselor, <br /> and
+                  Office of the Student Affair
+                </Typography>
+                <Button
+                  size="large"
+                  color="secondary"
+                  variant="contained"
+                  onClick={() => setIsLogin(true)}
+                >
+                  Compose a Request
+                </Button>
+              </Box>
+              <Box sx={styles.rightBox}>
+                <img src="./img/clip2.png" width="100%" />
+              </Box>
+            </Box>
+          </Container>
+        </Box>
       </Box>
     </Box>
   );
@@ -209,6 +232,27 @@ const styles = {
     bgcolor: "primary.main",
     color: "white",
   },
+  mainBox: {
+    bgcolor: "primary.main",
+    height: "100%",
+  },
+  leftBox: {
+    width: { xs: "fit-content", md: "500px" },
+    whiteSpace: "nowrap",
+    zIndex: 2,
+  },
+  rightBox: {
+    flex: 1,
+    display: {
+      sm: "none",
+      md: "block",
+    },
+  },
+  centerBox: {
+    display: "flex",
+    alignItems: "center",
+    height: "100%",
+  },
 };
 
-export default Home;
+export default StudentStart;

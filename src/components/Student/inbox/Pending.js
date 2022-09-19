@@ -153,7 +153,7 @@ const Pending = () => {
                           variant="subtitle2"
                           sx={styles.status}
                         >
-                          Approved
+                          Pending
                         </Typography>
                       </Typography>
                       <Divider />
@@ -252,7 +252,7 @@ const styles = {
     p: 1,
   },
   status: {
-    bgcolor: "success.main",
+    bgcolor: "secondary.main",
     px: 1,
     ml: 1,
   },
