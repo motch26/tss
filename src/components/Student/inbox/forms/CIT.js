@@ -8,17 +8,17 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
-const BSIS = () => {
-  const [bsisType, setBsisType] = useState("");
-  const [bsisCourse, setBsisCourse] = useState("");
-  const [bsisAcademicYr, setBsisAcademicYr] = useState(
+const CIT = () => {
+  const [citType, setCitType] = useState("");
+  const [citCourse, setCitCourse] = useState("");
+  const [citAcademicYr, setCitAcademicYr] = useState(
     parseInt(moment().format("YYYY"))
   );
-  const [bsisYrGraduated, setBsisYrGraduated] = useState(
+  const [citYrGraduated, setCitYrGraduated] = useState(
     parseInt(moment().format("YYYY"))
   );
-  const [bsisTransaction, setBsisTransaction] = useState("");
-  const [bsisMessage, setBsisMessage] = useState("");
+  const [citTransaction, setCitTransaction] = useState("");
+  const [citMessage, setCitMessage] = useState("");
 
   const years = [];
   for (let i = 2000; i <= parseInt(moment().format("YYYY")); i++) {
@@ -27,14 +27,14 @@ const BSIS = () => {
   return (
     <Box sx={{ mt: 1, width: "100%" }}>
       <Typography variant="h6" sx={{ textAlign: "center" }}>
-        BSIS Office Transaction/Visit Form
+        CIT Dean's Office Transaction/Visit Form
       </Typography>
       <Grid container spacing={1}>
         <Grid item xs={6}>
           <strong>Category</strong>
           <Select
-            value={bsisType}
-            onChange={(e) => setBsisType(e.target.value)}
+            value={citType}
+            onChange={(e) => setCitType(e.target.value)}
             fullWidth
           >
             <MenuItem value="student">Student</MenuItem>
@@ -44,19 +44,19 @@ const BSIS = () => {
         <Grid item xs={6}>
           <strong>Course</strong>
           <TextField
-            value={bsisCourse}
-            onChange={(e) => setBsisCourse(e.target.value)}
+            value={citCourse}
+            onChange={(e) => setCitCourse(e.target.value)}
             fullWidth
           />
         </Grid>
 
-        {bsisType ? (
-          bsisType === "student" ? (
+        {citType ? (
+          citType === "student" ? (
             <Grid item xs={6}>
               <strong>Academic Year</strong>
               <Select
-                value={bsisAcademicYr}
-                onChange={(e) => setBsisAcademicYr(parseInt(e.target.value))}
+                value={citAcademicYr}
+                onChange={(e) => setCitAcademicYr(parseInt(e.target.value))}
                 fullWidth
               >
                 {years.map((y) => (
@@ -68,8 +68,8 @@ const BSIS = () => {
             <Grid item xs={6}>
               <strong>Year Graduated</strong>
               <TextField
-                value={bsisYrGraduated}
-                onChange={(e) => setBsisYrGraduated(e.target.value)}
+                value={citYrGraduated}
+                onChange={(e) => setCitYrGraduated(e.target.value)}
                 fullWidth
               />
             </Grid>
@@ -78,8 +78,8 @@ const BSIS = () => {
         <Grid item xs={6}>
           <strong>Type of Transaction</strong>
           <TextField
-            value={bsisTransaction}
-            onChange={(e) => setBsisTransaction(e.target.value)}
+            value={citTransaction}
+            onChange={(e) => setCitTransaction(e.target.value)}
             fullWidth
           />
         </Grid>
@@ -87,10 +87,10 @@ const BSIS = () => {
           <strong>Additional Message</strong>
           <TextField
             fullWidth
-            value={bsisMessage}
+            value={citMessage}
             multiline
             minRows={5}
-            onChange={(e) => setBsisMessage(e.target.value)}
+            onChange={(e) => setCitMessage(e.target.value)}
           />
         </Grid>
       </Grid>
@@ -98,4 +98,4 @@ const BSIS = () => {
   );
 };
 
-export default BSIS;
+export default CIT;

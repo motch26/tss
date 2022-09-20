@@ -20,7 +20,7 @@ import {
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const StudentStart = () => {
+const OfficeStart = () => {
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(false);
@@ -39,7 +39,7 @@ const StudentStart = () => {
   };
 
   const login = () => {
-    navigate("/student/home");
+    navigate("/office/home");
   };
 
   return (
@@ -252,4 +252,4 @@ const styles = {
   },
 };
 
-export default StudentStart;
+export default OfficeStart;

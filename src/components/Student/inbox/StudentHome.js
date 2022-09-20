@@ -28,9 +28,11 @@ import {
   Typography,
 } from "@mui/material";
 import OSA from "./forms/OSA";
-import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import BSIS from "./forms/BSIS";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import CIT from "./forms/CIT";
 
 const StudentHome = () => {
   const navigate = useNavigate();
@@ -65,7 +67,7 @@ const StudentHome = () => {
                 >
                   <MenuItem value="cit">CIT Dean</MenuItem>
                   <MenuItem value="bsis">BSIS Program Chair</MenuItem>
-                  <MenuItem value="guidance">Guidance Counselor</MenuItem>
+                  {/* <MenuItem value="guidance">Guidance Counselor</MenuItem> */}
                   <MenuItem value="osa">OSA</MenuItem>
                 </Select>
               </Grid>
@@ -93,6 +95,8 @@ const StudentHome = () => {
             </Grid>
           </Grid>
           {to === "osa" ? <OSA /> : null}
+          {to === "bsis" ? <BSIS /> : null}
+          {to === "cit" ? <CIT /> : null}
           <Button
             variant="contained"
             color="secondary"

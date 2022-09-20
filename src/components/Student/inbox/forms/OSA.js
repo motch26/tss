@@ -1,15 +1,28 @@
 import React, { useState } from "react";
-import { Box, Grid, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import moment from "moment";
 const OSA = () => {
   const [osaComplainant, setOsaComplainant] = useState("");
   const [osaRespondent, setOsaRespondent] = useState("");
   const [osaAcademicYr, setOsaAcademicYr] = useState(new Date());
-  const [osaAcademicYrEnd, setOsaAcademicYrEnd] = useState(new Date());
+
   const [osaDateTimeIncident, setOsaDateTimeIncident] = useState(new Date());
   const [osaPlace, setOsaPlace] = useState("");
   const [osaIncident, setOsaIncident] = useState("");
   const [osaWitnesses, setOsaWitnesses] = useState("");
+
+  const years = [];
+  for (let i = 2000; i <= parseInt(moment().format("YYYY")); i++) {
+    years.push(i);
+  }
 
   return (
     <Box sx={{ mt: 1, width: "100%" }}>
@@ -34,23 +47,18 @@ const OSA = () => {
           />
         </Grid>
         <Grid item xs={6}>
-          <strong>Academic Year Start</strong>
-          <DatePicker
-            views={["year"]}
+          <strong>Academic Year</strong>
+          <Select
             value={osaAcademicYr}
-            onChange={(val) => setOsaAcademicYr(val)}
-            renderInput={(params) => <TextField fullWidth {...params} />}
-          />
+            onChange={(e) => setOsaAcademicYr(e.target.value)}
+            fullWidth
+          >
+            {years.map((y) => (
+              <MenuItem key={y} value={y}>{`${y} - ${y + 1} `}</MenuItem>
+            ))}
+          </Select>
         </Grid>
-        <Grid item xs={6}>
-          <strong>Academic Year End</strong>
-          <DatePicker
-            views={["year"]}
-            value={osaAcademicYrEnd}
-            onChange={(val) => setOsaAcademicYrEnd(val)}
-            renderInput={(params) => <TextField fullWidth {...params} />}
-          />
-        </Grid>
+
         <Grid item xs={6}>
           <strong>Date/Time of Incident</strong>
           <DateTimePicker
