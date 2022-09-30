@@ -8,6 +8,9 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
@@ -25,12 +28,12 @@ const Pending = () => {
 
   return (
     <>
-      <Paper variant="outlined" sx={styles.paper} elevation={20}>
+      <Paper sx={styles.paper} elevation={10}>
         <Box sx={styles.title}>
-          <Typography variant="h5">Pending Requests</Typography>
+          <Typography variant="h5">Requests</Typography>
         </Box>
         <Grid container>
-          <Grid item xs={12} md={6} p={1}>
+          <Grid item xs={12} p={1}>
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMore />}
@@ -118,66 +121,9 @@ const Pending = () => {
               </AccordionSummary>
             </Accordion>
           </Grid>
-          <Grid item xs={12} md={6} p={1}>
+          {/* <Grid item xs={12} md={6} p={1}>
             {isRequestOpen ? (
-              <Box sx={styles.requestContainer}>
-                <Card sx={styles.card}>
-                  <CardHeader
-                    sx={styles.cardHeader}
-                    avatar={<Avatar sx={styles.avatar}>GO</Avatar>}
-                    action={
-                      <IconButton onClick={() => setRequestOpen(false)}>
-                        <Close />
-                      </IconButton>
-                    }
-                    title="To: Guidance Office"
-                    subheader="Jun 3, 2022"
-                  />
-                  <CardContent>
-                    <Box sx={styles.requestBody}>
-                      <Typography mb={1}>
-                        Subject: <strong>Seek Guidance Help</strong>
-                      </Typography>
-                      <Typography mb={1}>
-                        {" "}
-                        Office Email: <strong>officeemail@chmsc.edu.ph</strong>
-                      </Typography>
-                      <Typography mb={1}>
-                        {" "}
-                        Date of Transaction: <strong>June 10, 2022</strong>
-                      </Typography>
-                      <Typography mb={1}>
-                        Status:
-                        <Typography
-                          component="span"
-                          variant="subtitle2"
-                          sx={styles.status}
-                        >
-                          Pending
-                        </Typography>
-                      </Typography>
-                      <Divider />
-                      <Box sx={styles.innerRequestBody}>
-                        <Typography
-                          fontWeight={600}
-                          sx={styles.requestBodyTitle}
-                        >
-                          REQUEST BODY
-                        </Typography>
-                        <Typography p={2}>
-                          Lorem ipsum dolor sit amet consectetur, adipisicing
-                          elit. Molestiae similique voluptatum quisquam
-                          reprehenderit obcaecati pariatur animi quis! Cum
-                          eveniet sapiente vel quia debitis unde provident
-                          sequi! Asperiores velit, cum dignissimos voluptatem
-                          fugit necessitatibus inventore. Obcaecati asperiores
-                          hic porro numquam dolor!
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
+              
             ) : (
               <Box sx={styles.emptyBox}>
                 <Typography variant="h3" textAlign="center">
@@ -186,8 +132,73 @@ const Pending = () => {
                 </Typography>
               </Box>
             )}
-          </Grid>
+          </Grid> */}
         </Grid>
+        <Dialog
+          open={isRequestOpen}
+          onClose={() => setRequestOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>Request Subject</DialogTitle>
+          <DialogContent>
+            <Box sx={styles.requestContainer}>
+              <Card sx={styles.card}>
+                <CardHeader
+                  sx={styles.cardHeader}
+                  avatar={<Avatar sx={styles.avatar}>GO</Avatar>}
+                  action={
+                    <IconButton onClick={() => setRequestOpen(false)}>
+                      <Close />
+                    </IconButton>
+                  }
+                  title="To: Guidance Office"
+                  subheader="Jun 3, 2022"
+                />
+                <CardContent>
+                  <Box sx={styles.requestBody}>
+                    <Typography mb={1}>
+                      Subject: <strong>Seek Guidance Help</strong>
+                    </Typography>
+                    <Typography mb={1}>
+                      {" "}
+                      Office Email: <strong>officeemail@chmsc.edu.ph</strong>
+                    </Typography>
+                    <Typography mb={1}>
+                      {" "}
+                      Date of Transaction: <strong>June 10, 2022</strong>
+                    </Typography>
+                    <Typography mb={1}>
+                      Status:
+                      <Typography
+                        component="span"
+                        variant="subtitle2"
+                        sx={styles.status}
+                      >
+                        Pending
+                      </Typography>
+                    </Typography>
+                    <Divider />
+                    <Box sx={styles.innerRequestBody}>
+                      <Typography fontWeight={600} sx={styles.requestBodyTitle}>
+                        REQUEST BODY
+                      </Typography>
+                      <Typography p={2}>
+                        Lorem ipsum dolor sit amet consectetur, adipisicing
+                        elit. Molestiae similique voluptatum quisquam
+                        reprehenderit obcaecati pariatur animi quis! Cum eveniet
+                        sapiente vel quia debitis unde provident sequi!
+                        Asperiores velit, cum dignissimos voluptatem fugit
+                        necessitatibus inventore. Obcaecati asperiores hic porro
+                        numquam dolor!
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          </DialogContent>
+        </Dialog>
       </Paper>
     </>
   );

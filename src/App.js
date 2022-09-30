@@ -8,17 +8,18 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import OfficeStart from "./components/Office/Start";
 import OfficeHome from "./components/Office/OfficeHome";
 import OfficePending from "./components/Office/OfficePending";
+import Notification from "./components/Student/inbox/Notification";
 function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <BrowserRouter>
         <Routes>
-          <Route path="/student">
-            <Route index element={<StudentStart />} />
-            <Route path="home" element={<StudentHome />}>
-              <Route index element={<Pending />} />
-            </Route>
+          <Route path="/" element={<StudentStart />} />
+          <Route path="home" element={<StudentHome />}>
+            <Route index element={<Pending />} />
+            <Route path="notification" element={<Notification />} />
           </Route>
+
           <Route path="/office">
             <Route index element={<OfficeStart />} />
             <Route path="home" element={<OfficeHome />}>

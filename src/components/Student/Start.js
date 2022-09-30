@@ -1,6 +1,5 @@
 import { EventNote } from "@mui/icons-material";
 import {
-  Alert,
   AppBar,
   Box,
   Button,
@@ -10,9 +9,9 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
   Grid,
-  Switch,
+  MenuItem,
+  Select,
   TextField,
   Toolbar,
   Typography,
@@ -24,22 +23,13 @@ const StudentStart = () => {
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(false);
-  const [isLoginAdmin, setIsLoginAdmin] = useState(false);
   const [isAbout, setIsAbout] = useState(false);
 
-  const [adminPass, setAdminPass] = useState("");
-  const [isPassWrong, setPassWrong] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const checkAdminPass = () => {
-    if (adminPass === "admin123") setPassWrong(false);
-    else setPassWrong(true);
-  };
+  const [type, setType] = useState("");
+  const [userId, setUserId] = useState("");
 
   const login = () => {
-    navigate("/student/home");
+    navigate("/home");
   };
 
   return (
@@ -84,51 +74,58 @@ const StudentStart = () => {
           </Typography>
         </DialogContent>
       </Dialog>
-      <Dialog
-        open={isLoginAdmin}
-        onClose={() => setIsLoginAdmin(false)}
-        maxWidth="md"
-      >
-        <DialogTitle sx={styles.adminDialogTitle}>Admin</DialogTitle>
-        <DialogContent>
-          <Box sx={styles.adminForm}>
-            <Typography variant="h6" textAlign="center">
-              Enter Admin Password:
-            </Typography>
-            <TextField
-              type="password"
-              onChange={(e) => setAdminPass(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              sx={styles.adminBtn}
-              onClick={checkAdminPass}
-            >
-              Enter
-            </Button>
 
-            {isPassWrong ? (
-              <Alert severity="error">Wrong admin password!</Alert>
-            ) : null}
-          </Box>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={isLogin} onClose={() => setIsLogin(false)} maxWidth="md">
+      <Dialog
+        open={isLogin}
+        onClose={() => setIsLogin(false)}
+        maxWidth="xs"
+        fullWidth
+      >
         <DialogTitle sx={styles.dialogTitle}>Login</DialogTitle>
         <DialogContent>
           <Grid container mt={1} spacing={1}>
             <Grid item xs={12}>
-              <Typography variant="h6">Email:</Typography>
-              <TextField fullWidth onChange={(e) => setEmail(e.target.value)} />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="h6">Password:</Typography>
-              <TextField
-                type="password"
+              <strong>User Type:</strong>
+              <Select
                 fullWidth
-                onChange={(e) => setPassword(e.target.value)}
-              />
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+              >
+                <MenuItem value="student">Student</MenuItem>
+                <MenuItem value="alumnus">Alumnus</MenuItem>
+                <MenuItem value="visitor">Visitor</MenuItem>
+              </Select>
             </Grid>
+            {type === "student" ? (
+              <Grid item xs={12}>
+                <strong>Student ID:</strong>
+                <TextField
+                  value={userId}
+                  fullWidth
+                  onChange={(e) => setUserId(e.target.value)}
+                />
+              </Grid>
+            ) : null}
+            {type === "alumnus" ? (
+              <Grid item xs={12}>
+                <strong>Almunus ID Number:</strong>
+                <TextField
+                  value={userId}
+                  fullWidth
+                  onChange={(e) => setUserId(e.target.value)}
+                />
+              </Grid>
+            ) : null}
+            {type === "visitor" ? (
+              <Grid item xs={12}>
+                <strong>Name:</strong>
+                <TextField
+                  value={userId}
+                  fullWidth
+                  onChange={(e) => setUserId(e.target.value)}
+                />
+              </Grid>
+            ) : null}
           </Grid>
 
           <Box sx={{ display: "flex", pt: 1 }}>
@@ -137,8 +134,9 @@ const StudentStart = () => {
               variant="contained"
               sx={styles.loginBtn}
               onClick={login}
+              disabled={!(Boolean(type) && Boolean(userId))}
             >
-              Login
+              Login via Google
             </Button>
           </Box>
         </DialogContent>
@@ -175,7 +173,7 @@ const StudentStart = () => {
                 </Button>
               </Box>
               <Box sx={styles.rightBox}>
-                <img src="./img/clip2.png" width="100%" />
+                <img src="./img/clip2.png" alt="profile" width="100%" />
               </Box>
             </Box>
           </Container>

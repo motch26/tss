@@ -37,7 +37,7 @@ const BSIS = () => {
             onChange={(e) => setBsisType(e.target.value)}
             fullWidth
           >
-            <MenuItem value="student">Student</MenuItem>
+            <MenuItem value="student">Student</MenuItem>   
             <MenuItem value="alumnus">Alumnus</MenuItem>
           </Select>
         </Grid>

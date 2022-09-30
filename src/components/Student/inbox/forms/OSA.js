@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
 const OSA = () => {
   const [osaComplainant, setOsaComplainant] = useState("");
@@ -91,7 +91,7 @@ const OSA = () => {
             fullWidth
             value={osaWitnesses}
             onChange={(e) => setOsaWitnesses(e.target.value)}
-            helperText="Seperate with comma if witnesses are more that two."
+            helperText="Seperate with comma if witnesses are more than two."
           />
         </Grid>
       </Grid>

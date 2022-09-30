@@ -1,10 +1,4 @@
-import {
-  Email,
-  EventNote,
-  ExpandMore,
-  Forward,
-  Menu,
-} from "@mui/icons-material";
+import { Email, EventNote, Forward, Menu } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -117,12 +111,16 @@ const StudentHome = () => {
               <Button
                 color="inherit"
                 sx={styles.btns}
-                onClick={() => navigate("/student/home")}
+                onClick={() => navigate("/home")}
               >
-                Pending
+                Requests
               </Button>
-              <Button color="inherit" sx={styles.btns}>
-                History
+              <Button
+                color="inherit"
+                sx={styles.btns}
+                onClick={() => navigate("/home/notification")}
+              >
+                Updates
               </Button>
             </ButtonGroup>
             <Button
