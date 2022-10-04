@@ -1,6 +1,5 @@
-import { EventNote } from "@mui/icons-material";
+import { EventNote, Google } from "@mui/icons-material";
 import {
-  Alert,
   AppBar,
   Box,
   Button,
@@ -10,10 +9,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
-  Grid,
-  Switch,
-  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -24,19 +19,7 @@ const OfficeStart = () => {
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(false);
-  const [isLoginAdmin, setIsLoginAdmin] = useState(false);
   const [isAbout, setIsAbout] = useState(false);
-
-  const [adminPass, setAdminPass] = useState("");
-  const [isPassWrong, setPassWrong] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const checkAdminPass = () => {
-    if (adminPass === "admin123") setPassWrong(false);
-    else setPassWrong(true);
-  };
 
   const login = () => {
     navigate("/office/home");
@@ -84,61 +67,24 @@ const OfficeStart = () => {
           </Typography>
         </DialogContent>
       </Dialog>
-      <Dialog
-        open={isLoginAdmin}
-        onClose={() => setIsLoginAdmin(false)}
-        maxWidth="md"
-      >
-        <DialogTitle sx={styles.adminDialogTitle}>Admin</DialogTitle>
-        <DialogContent>
-          <Box sx={styles.adminForm}>
-            <Typography variant="h6" textAlign="center">
-              Enter Admin Password:
-            </Typography>
-            <TextField
-              type="password"
-              onChange={(e) => setAdminPass(e.target.value)}
-            />
-            <Button
-              variant="contained"
-              sx={styles.adminBtn}
-              onClick={checkAdminPass}
-            >
-              Enter
-            </Button>
 
-            {isPassWrong ? (
-              <Alert severity="error">Wrong admin password!</Alert>
-            ) : null}
-          </Box>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={isLogin} onClose={() => setIsLogin(false)} maxWidth="md">
+      <Dialog
+        fullWidth
+        open={isLogin}
+        onClose={() => setIsLogin(false)}
+        maxWidth="xs"
+      >
         <DialogTitle sx={styles.dialogTitle}>Login</DialogTitle>
         <DialogContent>
-          <Grid container mt={1} spacing={1}>
-            <Grid item xs={12}>
-              <Typography variant="h6">Email:</Typography>
-              <TextField fullWidth onChange={(e) => setEmail(e.target.value)} />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="h6">Password:</Typography>
-              <TextField
-                type="password"
-                fullWidth
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Grid>
-          </Grid>
-
-          <Box sx={{ display: "flex", pt: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
             <Button
               color="secondary"
               variant="contained"
-              sx={styles.loginBtn}
+              sx={{ display: "flex" }}
               onClick={login}
+              startIcon={<Google />}
             >
-              Login
+              Login via Google
             </Button>
           </Box>
         </DialogContent>
@@ -210,7 +156,7 @@ const styles = {
   },
   loginBtn: {
     display: "block",
-    ml: "auto",
+    mx: "auto",
   },
   adminDialogTitle: {
     bgcolor: "secondary.main",

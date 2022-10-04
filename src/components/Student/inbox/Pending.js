@@ -34,7 +34,7 @@ const Pending = () => {
         </Box>
         <Grid container>
           <Grid item xs={12} p={1}>
-            <Accordion>
+            <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMore />}
                 sx={{ bgcolor: "primary.light" }}
@@ -121,18 +121,6 @@ const Pending = () => {
               </AccordionSummary>
             </Accordion>
           </Grid>
-          {/* <Grid item xs={12} md={6} p={1}>
-            {isRequestOpen ? (
-              
-            ) : (
-              <Box sx={styles.emptyBox}>
-                <Typography variant="h3" textAlign="center">
-                  Click a request to display full transaction request
-                  information.
-                </Typography>
-              </Box>
-            )}
-          </Grid> */}
         </Grid>
         <Dialog
           open={isRequestOpen}

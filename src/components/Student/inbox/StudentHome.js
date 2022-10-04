@@ -1,4 +1,4 @@
-import { Email, EventNote, Forward, Menu } from "@mui/icons-material";
+import { Email, EventNote, Forward, Logout } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -15,11 +15,14 @@ import {
   List,
   ListItemButton,
   MenuItem,
+  Menu,
   Select,
   TextField,
   Toolbar,
   Tooltip,
   Typography,
+  Divider,
+  ListItemIcon,
 } from "@mui/material";
 import OSA from "./forms/OSA";
 import BSIS from "./forms/BSIS";
@@ -35,6 +38,7 @@ const StudentHome = () => {
   const [to, setTo] = useState("");
   const [transacDate, setTransacDate] = useState(new Date());
 
+  const [anchor, setAnchor] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
@@ -78,12 +82,12 @@ const StudentHome = () => {
                 <TextField fullWidth />
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="h6">Email:</Typography>
+                <Typography variant="h6">Contact No.:</Typography>
                 <TextField
                   fullWidth
-                  defaultValue="youremail@gmail.com"
-                  InputProps={{ readOnly: true }}
-                  helperText="Non-editable"
+                  type="tel"
+                  inputProps={{ maxLength: 11 }}
+                  helperText="ex: 09123456789"
                 />
               </Grid>
             </Grid>
@@ -102,6 +106,48 @@ const StudentHome = () => {
           </Button>
         </DialogContent>
       </Dialog>
+      <Menu
+        anchorEl={anchor}
+        id="account-menu"
+        open={Boolean(anchor)}
+        onClose={() => setAnchor(null)}
+        onClick={() => setAnchor(null)}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <MenuItem>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
       <AppBar position="static">
         <Container>
           <Toolbar>
@@ -133,7 +179,9 @@ const StudentHome = () => {
               Compose Request
             </Button>
             <Tooltip title="Catherine">
-              <Avatar sx={styles.avatar}>C</Avatar>
+              <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
+                <Avatar sx={styles.avatar}>C</Avatar>
+              </IconButton>
             </Tooltip>
             <IconButton
               sx={{

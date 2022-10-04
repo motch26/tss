@@ -1,10 +1,4 @@
-import {
-  Email,
-  EventNote,
-  ExpandMore,
-  Forward,
-  Menu,
-} from "@mui/icons-material";
+import { EventNote, Menu } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -12,23 +6,13 @@ import {
   Button,
   ButtonGroup,
   Container,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Drawer,
-  Grid,
   IconButton,
-  List,
-  ListItemButton,
-  MenuItem,
-  Select,
   TextField,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
 
-import { DateTimePicker } from "@mui/x-date-pickers";
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -52,11 +36,15 @@ const OfficeHome = () => {
               <Button
                 color="inherit"
                 sx={styles.btns}
-                onClick={() => navigate("/student/home")}
+                onClick={() => navigate("/office/home")}
               >
                 Pending
               </Button>
-              <Button color="inherit" sx={styles.btns}>
+              <Button
+                color="inherit"
+                sx={styles.btns}
+                onClick={() => navigate("/office/home/calendar")}
+              >
                 Approved
               </Button>
             </ButtonGroup>

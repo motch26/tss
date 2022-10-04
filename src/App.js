@@ -9,6 +9,8 @@ import OfficeStart from "./components/Office/Start";
 import OfficeHome from "./components/Office/OfficeHome";
 import OfficePending from "./components/Office/OfficePending";
 import Notification from "./components/Student/inbox/Notification";
+import Schedule from "./components/Office/Calendar";
+
 function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -24,6 +26,7 @@ function App() {
             <Route index element={<OfficeStart />} />
             <Route path="home" element={<OfficeHome />}>
               <Route index element={<OfficePending />} />
+              <Route path="calendar" element={<Schedule />} />
             </Route>
           </Route>
         </Routes>
