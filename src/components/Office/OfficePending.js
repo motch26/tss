@@ -20,13 +20,16 @@ import {
   ListItemButton,
   ListItemText,
   Paper,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 
 const OfficePending = () => {
   const [isRequestOpen, setRequestOpen] = useState(false);
-
+  const [reqResponse, setReqResponse] = useState("");
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const [resMessage, setResMessage] = useState("");
   return (
     <>
       <Paper sx={styles.paper} elevation={10}>
@@ -184,7 +187,7 @@ const OfficePending = () => {
                     </Box>
                     <Box
                       sx={{
-                        display: "flex",
+                        display: buttonClicked ? "none" : "flex",
                         justifyContent: "space-around",
                         mt: 2,
                       }}
@@ -193,6 +196,10 @@ const OfficePending = () => {
                         startIcon={<Check />}
                         variant="contained"
                         color="success"
+                        onClick={() => {
+                          setReqResponse("approve");
+                          setButtonClicked(true);
+                        }}
                       >
                         Approve
                       </Button>
@@ -200,10 +207,36 @@ const OfficePending = () => {
                         startIcon={<Dangerous />}
                         variant="outlined"
                         color="error"
+                        onClick={() => {
+                          setReqResponse("decline");
+                          setButtonClicked(true);
+                        }}
                       >
                         Decline
                       </Button>
                     </Box>
+                  </Box>
+                  <Box sx={{ mt: 2 }}>
+                    {reqResponse === "approve" ? (
+                      <Box>
+                        <strong>Additional Message:</strong>
+                        <TextField
+                          fullWidth
+                          value={resMessage}
+                          multiline
+                          rows={4}
+                          onChange={(e) => setResMessage(e.target.value)}
+                        />
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{ mt: 1, display: "block", ml: "auto" }}
+                          onClick={() => setRequestOpen(false)}
+                        >
+                          Submit
+                        </Button>
+                      </Box>
+                    ) : null}
                   </Box>
                 </CardContent>
               </Card>
