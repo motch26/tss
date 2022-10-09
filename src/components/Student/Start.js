@@ -17,8 +17,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
 const StudentStart = () => {
   const navigate = useNavigate();
 
@@ -29,7 +30,14 @@ const StudentStart = () => {
   const [userId, setUserId] = useState("");
 
   const login = () => {
-    navigate("/home");
+    useGoogleLogin({
+      onSuccess: (res) => console.log(res),
+      flow: "auth-code",
+    });
+  };
+
+  const responseGoogle = (res) => {
+    console.log(res);
   };
 
   return (
@@ -129,11 +137,20 @@ const StudentStart = () => {
           </Grid>
 
           <Box sx={{ display: "flex", pt: 1 }}>
+            {/* <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                console.log(credentialResponse);
+              }}
+              onError={() => {
+                console.log("Login Failed");
+              }}
+            /> */}
+
             <Button
               color="secondary"
               variant="contained"
               sx={styles.loginBtn}
-              onClick={login}
+              onClick={() => login()}
               disabled={!(Boolean(type) && Boolean(userId))}
             >
               Login via Google
