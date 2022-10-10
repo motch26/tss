@@ -1,4 +1,10 @@
-import { Email, EventNote, Forward, Logout } from "@mui/icons-material";
+import {
+  Email,
+  EventNote,
+  Forward,
+  Logout,
+  Menu as MenuIcon,
+} from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -21,17 +27,26 @@ import {
   Toolbar,
   Tooltip,
   Typography,
-  Divider,
   ListItemIcon,
 } from "@mui/material";
 import OSA from "./forms/OSA";
 import BSIS from "./forms/BSIS";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import React, { useState } from "react";
+import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import CIT from "./forms/CIT";
 
 const StudentHome = () => {
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "family_name",
+    "given_name",
+    "picture",
+    "name",
+    "email",
+    "userId",
+    "type",
+  ]);
   const navigate = useNavigate();
   const [isCompose, setCompose] = useState(false);
 
@@ -40,6 +55,18 @@ const StudentHome = () => {
 
   const [anchor, setAnchor] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
+
+  const logout = () => {
+    removeCookie("family_name", { path: "/" });
+    removeCookie("given_name", { path: "/" });
+    removeCookie("picture", { path: "/" });
+    removeCookie("name", { path: "/" });
+    removeCookie("email", { path: "/" });
+    removeCookie("userId", { path: "/" });
+    removeCookie("type", { path: "/" });
+
+    navigate("/");
+  };
 
   return (
     <Box sx={styles.body}>
@@ -141,7 +168,7 @@ const StudentHome = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem>
+        <MenuItem onClick={() => logout()}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -178,9 +205,13 @@ const StudentHome = () => {
             >
               Compose Request
             </Button>
-            <Tooltip title="Catherine">
+            <Tooltip title={cookies.given_name}>
               <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
-                <Avatar sx={styles.avatar}>C</Avatar>
+                <Avatar
+                  alt={cookies.name}
+                  src={cookies.picture}
+                  sx={styles.avatar}
+                />
               </IconButton>
             </Tooltip>
             <IconButton
@@ -191,7 +222,7 @@ const StudentHome = () => {
               }}
               onClick={() => setOpenDrawer(true)}
             >
-              <Menu />
+              <MenuIcon />
             </IconButton>
           </Toolbar>
           <Drawer

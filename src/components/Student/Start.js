@@ -1,5 +1,6 @@
 import { EventNote } from "@mui/icons-material";
 import {
+  Alert,
   AppBar,
   Box,
   Button,
@@ -17,27 +18,62 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import jwt_decode from "jwt-decode";
+import axios from "axios";
+import { useCookies } from "react-cookie";
+import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 const StudentStart = () => {
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "family_name",
+    "given_name",
+    "picture",
+    "name",
+    "email",
+    "userId",
+    "type",
+  ]);
 
+  const [loginError, setLoginError] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [isAbout, setIsAbout] = useState(false);
 
   const [type, setType] = useState("");
   const [userId, setUserId] = useState("");
 
-  const login = () => {
-    useGoogleLogin({
-      onSuccess: (res) => console.log(res),
-      flow: "auth-code",
-    });
-  };
+  const loginSuccessful = (res) => {
+    const userObject = jwt_decode(res.credential);
+    const { family_name, given_name, picture, name, email } = userObject;
 
-  const responseGoogle = (res) => {
-    console.log(res);
+    const setCookies = (_name, _value) => {
+      setCookie(_name, _value, {
+        path: "/",
+        expires: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+      });
+    };
+    setCookies("family_name", family_name);
+    setCookies("given_name", given_name);
+    setCookies("name", name);
+    setCookies("email", email);
+    setCookies("picture", picture);
+    setCookies("type", type);
+    setCookies("userId", userId);
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("type", type);
+    formData.append("name", name);
+    formData.append("userId", userId);
+
+    axios
+      .post("http://localhost/tss/api/checkUser.php", formData)
+      .then(({ data }) => {
+        if (data) navigate("/home");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -111,6 +147,7 @@ const StudentStart = () => {
                   value={userId}
                   fullWidth
                   onChange={(e) => setUserId(e.target.value)}
+                  helperText=""
                 />
               </Grid>
             ) : null}
@@ -121,6 +158,7 @@ const StudentStart = () => {
                   value={userId}
                   fullWidth
                   onChange={(e) => setUserId(e.target.value)}
+                  helperText=""
                 />
               </Grid>
             ) : null}
@@ -136,26 +174,26 @@ const StudentStart = () => {
             ) : null}
           </Grid>
 
-          <Box sx={{ display: "flex", pt: 1 }}>
-            {/* <GoogleLogin
-              onSuccess={(credentialResponse) => {
-                console.log(credentialResponse);
-              }}
+          <Box
+            sx={{
+              display: userId ? "flex" : "none",
+              pt: 1,
+              justifyContent: "flex-end",
+            }}
+          >
+            <GoogleLogin
+              onSuccess={loginSuccessful}
               onError={() => {
                 console.log("Login Failed");
               }}
-            /> */}
-
-            <Button
-              color="secondary"
-              variant="contained"
-              sx={styles.loginBtn}
-              onClick={() => login()}
-              disabled={!(Boolean(type) && Boolean(userId))}
-            >
-              Login via Google
-            </Button>
+            />
           </Box>
+          <Alert
+            severity="error"
+            sx={{ display: loginError ? "flex" : "none", mt: 1 }}
+          >
+            A problem has occured during login!
+          </Alert>
         </DialogContent>
       </Dialog>
       <Box sx={styles.content}>
