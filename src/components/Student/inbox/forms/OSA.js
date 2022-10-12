@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import {
   Box,
+  Chip,
+  FormControl,
   Grid,
+  Input,
   MenuItem,
   Select,
   TextField,
@@ -12,12 +15,31 @@ import moment from "moment";
 const OSA = () => {
   const [osaComplainant, setOsaComplainant] = useState("");
   const [osaRespondent, setOsaRespondent] = useState("");
-  const [osaAcademicYr, setOsaAcademicYr] = useState(new Date());
+  const [osaAcademicYr, setOsaAcademicYr] = useState(new Date().getFullYear());
 
   const [osaDateTimeIncident, setOsaDateTimeIncident] = useState(new Date());
   const [osaPlace, setOsaPlace] = useState("");
   const [osaIncident, setOsaIncident] = useState("");
   const [osaWitnesses, setOsaWitnesses] = useState("");
+
+  const [values, setValues] = useState([]);
+  const [currValue, setCurrValue] = useState("");
+
+  const handleKeyUp = (e) => {
+    if (e.keyCode == 13 && currValue) {
+      setValues((oldState) => [...oldState, e.target.value]);
+      setCurrValue("");
+    }
+  };
+  const handleChange = (e) => {
+    setCurrValue(e.target.value);
+  };
+
+  const handleDelete = (item, index) => {
+    let arr = [...values];
+    arr.splice(index, 1);
+    setValues(arr);
+  };
 
   const years = [];
   for (let i = 2000; i <= parseInt(moment().format("YYYY")); i++) {
@@ -33,9 +55,11 @@ const OSA = () => {
         <Grid item xs={6}>
           <strong>Name of Complainant</strong>
           <TextField
+            required
             value={osaComplainant}
             onChange={(e) => setOsaComplainant(e.target.value)}
             fullWidth
+            name="complainant"
           />
         </Grid>
         <Grid item xs={6}>
@@ -44,14 +68,18 @@ const OSA = () => {
             value={osaRespondent}
             onChange={(e) => setOsaRespondent(e.target.value)}
             fullWidth
+            required
+            name="respondent"
           />
         </Grid>
         <Grid item xs={6}>
           <strong>Academic Year</strong>
           <Select
+            required
             value={osaAcademicYr}
             onChange={(e) => setOsaAcademicYr(e.target.value)}
             fullWidth
+            name="year"
           >
             {years.map((y) => (
               <MenuItem key={y} value={y}>{`${y} - ${y + 1} `}</MenuItem>
@@ -63,8 +91,10 @@ const OSA = () => {
           <strong>Date/Time of Incident</strong>
           <DateTimePicker
             value={osaDateTimeIncident}
-            onChange={(val) => setOsaDateTimeIncident(val)}
-            renderInput={(params) => <TextField fullWidth {...params} />}
+            onChange={(val) => setOsaDateTimeIncident(val._d)}
+            renderInput={(params) => (
+              <TextField name="osaDateTime" fullWidth {...params} required />
+            )}
           />
         </Grid>
         <Grid item xs={6}>
@@ -73,6 +103,8 @@ const OSA = () => {
             fullWidth
             value={osaPlace}
             onChange={(e) => setOsaPlace(e.target.value)}
+            name="place"
+            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -83,16 +115,36 @@ const OSA = () => {
             multiline
             minRows={5}
             onChange={(e) => setOsaIncident(e.target.value)}
+            name="narration"
+            required
           />
         </Grid>
         <Grid item xs={12}>
           <strong>Name of Witness/es</strong>
-          <TextField
+          <FormControl fullWidth>
+            <div className={"container"}>
+              {values.map((item, index) => (
+                <Chip
+                  key={index}
+                  size="small"
+                  onDelete={() => handleDelete(item, index)}
+                  label={item}
+                />
+              ))}
+            </div>
+            <Input
+              value={currValue}
+              onChange={handleChange}
+              onKeyDown={handleKeyUp}
+            />
+          </FormControl>
+          {/* <TextField
             fullWidth
             value={osaWitnesses}
             onChange={(e) => setOsaWitnesses(e.target.value)}
             helperText="Seperate with comma if witnesses are more than two."
-          />
+          /> */}
+          <TextField type="hidden" value={values} name="witnesses" />
         </Grid>
       </Grid>
     </Box>

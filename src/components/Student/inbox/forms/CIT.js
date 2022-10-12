@@ -8,7 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
+import { useCookies } from "react-cookie";
 const CIT = () => {
+  const [cookies] = useCookies(["type"]);
   const [citType, setCitType] = useState("");
   const [citCourse, setCitCourse] = useState("");
   const [citAcademicYr, setCitAcademicYr] = useState(
@@ -31,49 +33,40 @@ const CIT = () => {
       </Typography>
       <Grid container spacing={1}>
         <Grid item xs={6}>
-          <strong>Category</strong>
-          <Select
-            value={citType}
-            onChange={(e) => setCitType(e.target.value)}
-            fullWidth
-          >
-            <MenuItem value="student">Student</MenuItem>
-            <MenuItem value="alumnus">Alumnus</MenuItem>
-          </Select>
-        </Grid>
-        <Grid item xs={6}>
           <strong>Course</strong>
           <TextField
             value={citCourse}
             onChange={(e) => setCitCourse(e.target.value)}
             fullWidth
+            name="course"
           />
         </Grid>
 
-        {citType ? (
-          citType === "student" ? (
-            <Grid item xs={6}>
-              <strong>Academic Year</strong>
-              <Select
-                value={citAcademicYr}
-                onChange={(e) => setCitAcademicYr(parseInt(e.target.value))}
-                fullWidth
-              >
-                {years.map((y) => (
-                  <MenuItem key={y} value={y}>{`${y} - ${y + 1} `}</MenuItem>
-                ))}
-              </Select>
-            </Grid>
-          ) : (
-            <Grid item xs={6}>
-              <strong>Year Graduated</strong>
-              <TextField
-                value={citYrGraduated}
-                onChange={(e) => setCitYrGraduated(e.target.value)}
-                fullWidth
-              />
-            </Grid>
-          )
+        {cookies.type === "student" ? (
+          <Grid item xs={6}>
+            <strong>Academic Year</strong>
+            <Select
+              value={citAcademicYr}
+              onChange={(e) => setCitAcademicYr(parseInt(e.target.value))}
+              fullWidth
+              name="year"
+            >
+              {years.map((y) => (
+                <MenuItem key={y} value={y}>{`${y} - ${y + 1} `}</MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        ) : null}
+        {cookies.type === "alumnus" ? (
+          <Grid item xs={6}>
+            <strong>Year Graduated</strong>
+            <TextField
+              value={citYrGraduated}
+              onChange={(e) => setCitYrGraduated(e.target.value)}
+              fullWidth
+              name="year"
+            />
+          </Grid>
         ) : null}
         <Grid item xs={6}>
           <strong>Type of Transaction</strong>
@@ -81,6 +74,7 @@ const CIT = () => {
             value={citTransaction}
             onChange={(e) => setCitTransaction(e.target.value)}
             fullWidth
+            name="transacType"
           />
         </Grid>
         <Grid item xs={12}>
@@ -91,6 +85,7 @@ const CIT = () => {
             multiline
             minRows={5}
             onChange={(e) => setCitMessage(e.target.value)}
+            name="message"
           />
         </Grid>
       </Grid>

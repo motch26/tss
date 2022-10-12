@@ -36,6 +36,8 @@ import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import CIT from "./forms/CIT";
+import axios from "axios";
+import moment from "moment";
 
 const StudentHome = () => {
   const [cookies, setCookie, removeCookie] = useCookies([
@@ -51,7 +53,6 @@ const StudentHome = () => {
   const [isCompose, setCompose] = useState(false);
 
   const [to, setTo] = useState("");
-  const [transacDate, setTransacDate] = useState(new Date());
 
   const [anchor, setAnchor] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -68,6 +69,28 @@ const StudentHome = () => {
     navigate("/");
   };
 
+  const submit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    formData.append("type", cookies.type);
+    formData.append("senderName", cookies.name);
+    formData.append("senderEmail", cookies.email);
+    if (formData.has("osaDateTime")) {
+      const dateTimeStr = formData.get("osaDateTime");
+
+      const osaDateTime = moment(new Date(dateTimeStr)).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      formData.append("osaDateTime", osaDateTime);
+    }
+    axios
+      .post("http://localhost/tss/api/compose.php", formData)
+      .then(({ data }) => {
+        if (data) console.log(data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <Box sx={styles.body}>
       <Dialog
@@ -81,56 +104,73 @@ const StudentHome = () => {
       >
         <DialogTitle sx={styles.dialogTitle}>Compose a Request</DialogTitle>
         <DialogContent>
-          <Grid container mt={2} gap={1}>
-            <Grid item container xs={12} spacing={1}>
-              <Grid item xs={6}>
-                <Typography variant="h6">To:</Typography>
-                <Select
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
-                  fullWidth
-                >
-                  <MenuItem value="cit">CIT Dean</MenuItem>
-                  <MenuItem value="bsis">BSIS Program Chair</MenuItem>
-                  {/* <MenuItem value="guidance">Guidance Counselor</MenuItem> */}
-                  <MenuItem value="osa">OSA</MenuItem>
-                </Select>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Date of Transaction:</Typography>
-                <DateTimePicker
-                  renderInput={(props) => <TextField fullWidth {...props} />}
-                  value={transacDate}
-                  onChange={(val) => setTransacDate(val)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Subject:</Typography>
-                <TextField fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6">Contact No.:</Typography>
-                <TextField
-                  fullWidth
-                  type="tel"
-                  inputProps={{ maxLength: 11 }}
-                  helperText="ex: 09123456789"
-                />
+          <Box
+            component="form"
+            onSubmit={submit}
+            onKeyDown={(e) => {
+              if (e.keyCode == 13) e.preventDefault();
+            }}
+          >
+            <Grid container mt={2} gap={1}>
+              <Grid item container xs={12} spacing={1}>
+                <Grid item xs={6}>
+                  <Typography variant="h6">To:</Typography>
+                  <Select
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                    fullWidth
+                    required
+                    name="office"
+                  >
+                    <MenuItem value="cit">CIT Dean</MenuItem>
+                    <MenuItem value="bsis">BSIS Program Chair</MenuItem>
+                    {/* <MenuItem value="guidance">Guidance Counselor</MenuItem> */}
+                    <MenuItem value="osa">OSA</MenuItem>
+                  </Select>
+                </Grid>
+                {/* <Grid item xs={6}>
+                  <Typography variant="h6">Date of Transaction:</Typography>
+                  <DateTimePicker
+                    renderInput={(props) => (
+                      <TextField name="date" required fullWidth {...props} />
+                    )}
+                    value={transacDate}
+                    onChange={(val) => {
+                      setTransacDate(val._d);
+                    }}
+                  />
+                </Grid> */}
+                <Grid item xs={6}>
+                  <Typography variant="h6">Contact No.:</Typography>
+                  <TextField
+                    fullWidth
+                    type="tel"
+                    inputProps={{ maxLength: 11 }}
+                    helperText="ex: 09123456789"
+                    required
+                    name="contact"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="h6">Subject:</Typography>
+                  <TextField fullWidth name="subject" required />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          {to === "osa" ? <OSA /> : null}
-          {to === "bsis" ? <BSIS /> : null}
-          {to === "cit" ? <CIT /> : null}
-          <Button
-            variant="contained"
-            color="secondary"
-            endIcon={<Forward />}
-            fullWidth
-            sx={styles.sendBtn}
-          >
-            Send Request
-          </Button>
+            {to === "osa" ? <OSA /> : null}
+            {to === "bsis" ? <BSIS /> : null}
+            {to === "cit" ? <CIT /> : null}
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              endIcon={<Forward />}
+              fullWidth
+              sx={styles.sendBtn}
+            >
+              Send Request
+            </Button>
+          </Box>
         </DialogContent>
       </Dialog>
       <Menu

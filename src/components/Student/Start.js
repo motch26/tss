@@ -17,7 +17,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -34,6 +34,12 @@ const StudentStart = () => {
     "userId",
     "type",
   ]);
+  const checkCookie = () => {
+    if (cookies.email) navigate("/home");
+  };
+  useEffect(() => {
+    checkCookie();
+  }, []);
 
   const [loginError, setLoginError] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
