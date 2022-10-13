@@ -1,4 +1,5 @@
 import {
+  Close,
   Email,
   EventNote,
   Forward,
@@ -28,10 +29,11 @@ import {
   Tooltip,
   Typography,
   ListItemIcon,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import OSA from "./forms/OSA";
 import BSIS from "./forms/BSIS";
-import { DateTimePicker } from "@mui/x-date-pickers";
 import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -56,6 +58,7 @@ const StudentHome = () => {
 
   const [anchor, setAnchor] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [displaySnackBar, setDisplaySnackbar] = useState(false);
 
   const logout = () => {
     removeCookie("family_name", { path: "/" });
@@ -86,7 +89,11 @@ const StudentHome = () => {
     axios
       .post("http://localhost/tss/api/compose.php", formData)
       .then(({ data }) => {
-        if (data) console.log(data);
+        if (data) {
+          setTo("");
+          setCompose(false);
+          setDisplaySnackbar(true);
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -128,18 +135,7 @@ const StudentHome = () => {
                     <MenuItem value="osa">OSA</MenuItem>
                   </Select>
                 </Grid>
-                {/* <Grid item xs={6}>
-                  <Typography variant="h6">Date of Transaction:</Typography>
-                  <DateTimePicker
-                    renderInput={(props) => (
-                      <TextField name="date" required fullWidth {...props} />
-                    )}
-                    value={transacDate}
-                    onChange={(val) => {
-                      setTransacDate(val._d);
-                    }}
-                  />
-                </Grid> */}
+
                 <Grid item xs={6}>
                   <Typography variant="h6">Contact No.:</Typography>
                   <TextField
@@ -299,6 +295,28 @@ const StudentHome = () => {
           <Outlet />
         </Container>
       </Box>
+      <Snackbar
+        open={displaySnackBar}
+        autoHideDuration={3000}
+        color="primary"
+        onClose={(e, reason) => {
+          if (reason === "clickaway") return;
+          setDisplaySnackbar(false);
+        }}
+        message="Request Submitted"
+      >
+        <Alert
+          variant="filled"
+          severity="success"
+          sx={{ width: "100%" }}
+          onClose={(e, reason) => {
+            if (reason === "clickaway") return;
+            setDisplaySnackbar(false);
+          }}
+        >
+          Request Submitted!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

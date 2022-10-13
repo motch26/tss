@@ -22,10 +22,13 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import axios from "axios";
 
 const Pending = () => {
   const [isRequestOpen, setRequestOpen] = useState(false);
+  const [requests, setRequests] = useState([]);
 
+  const getRequests = () => {};
   return (
     <>
       <Paper sx={styles.paper} elevation={10}>
