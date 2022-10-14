@@ -23,12 +23,73 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useCookies } from "react-cookie";
+import { useEffect } from "react";
+import moment from "moment";
+import emails from "./../../../email.json";
 const Pending = () => {
+  const officeNames = {
+    osa: "Office of the Student Affairs",
+    cit: "CIT Dean's Office",
+    bsis: "BSIS Program Chairman",
+  };
   const [isRequestOpen, setRequestOpen] = useState(false);
-  const [requests, setRequests] = useState([]);
+  const [thisMonth, setThisMonth] = useState([]);
+  const [lastMonth, setLastMonth] = useState([]);
+  const [thisYear, setThisYear] = useState([]);
+  const [older, setOlder] = useState([]);
 
-  const getRequests = () => {};
+  const [cookies] = useCookies(["email", "type"]);
+
+  const [dSubject, setDSubject] = useState("");
+  const [dOffice, setDOffice] = useState("");
+  const [dOfficeEmail, setDOfficeEmail] = useState("");
+  const [dDate, setDDate] = useState("");
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    getRequests();
+  }, []);
+
+  const getRequests = () => {
+    axios
+      .get(
+        `http://localhost/tss/api/getRequests.php?email=${encodeURIComponent(
+          cookies.email
+        )}&type=${cookies.type}`
+      )
+      .then(({ data }) => {
+        // if (data) setRequests(data);
+        const month = new Date().getMonth();
+        const year = new Date().getFullYear();
+        setThisMonth(
+          data.filter((d) => {
+            const rowMonth = new Date(d.requestDate).getMonth();
+            return rowMonth === month;
+          })
+        );
+        setLastMonth(
+          data.filter((d) => {
+            const rowMonth = new Date(d.requestDate).getMonth();
+            return rowMonth === month - 1;
+          })
+        );
+        setThisYear(
+          data.filter((d) => {
+            const rowMonth = new Date(d.requestDate).getMonth();
+            const rowYear = new Date(d.requestDate).getFullYear();
+            return rowMonth < month - 1 && rowYear === year;
+          })
+        );
+        setOlder(
+          data.filter((d) => {
+            const rowYear = new Date(d.requestDate).getFullYear();
+            return rowYear < year;
+          })
+        );
+        console.log(year);
+      });
+  };
   return (
     <>
       <Paper sx={styles.paper} elevation={10}>
@@ -46,54 +107,60 @@ const Pending = () => {
                   This Month
                 </Typography>
                 <Typography variant="subtitle2" sx={styles.summary}>
-                  2 requests
+                  {`${thisMonth.length} requests`}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <List>
-                  <ListItemButton onClick={() => setRequestOpen(true)}>
-                    <ListItemAvatar>
-                      <Avatar sx={styles.avatar}>GO</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body1" fontWeight={500}>
-                          Seek Guidance Help
-                        </Typography>
-                      }
-                      secondary={
-                        <>
-                          {"To: "}
-                          <Typography variant="body2" component="span">
-                            Guidance Office
-                          </Typography>
-                        </>
-                      }
-                    />
-                    <Typography>Jun 3</Typography>
-                  </ListItemButton>
-                  <Divider />
-                  <ListItemButton onClick={() => setRequestOpen(true)}>
-                    <ListItemAvatar>
-                      <Avatar sx={styles.avatar}>PC</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        <Typography variant="body1" fontWeight={500}>
-                          Settle INC Grades
-                        </Typography>
-                      }
-                      secondary={
-                        <>
-                          {"To: "}
-                          <Typography variant="body2" component="span">
-                            Program Chair
-                          </Typography>
-                        </>
-                      }
-                    />
-                    <Typography>Jun 1</Typography>
-                  </ListItemButton>
+                  {thisMonth.length > 0
+                    ? thisMonth.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton
+                            onClick={() => {
+                              setDSubject(r.subject);
+                              setDOffice(r.office);
+                              setDDate(
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              setDOfficeEmail(emails[r.office]);
+
+                              setRequestOpen(true);
+                            }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office.toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {r.subject}
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {officeNames[r.office]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(new Date(r.requestDate)).format("MMM D")}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
                 </List>
               </AccordionDetails>
             </Accordion>
@@ -106,9 +173,49 @@ const Pending = () => {
                   Last Month
                 </Typography>
                 <Typography variant="subtitle2" sx={styles.summary}>
-                  0 requests
+                  {`${lastMonth.length} requests`}
                 </Typography>
               </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {lastMonth.length > 0
+                    ? lastMonth.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton onClick={() => setRequestOpen(true)}>
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office.toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {r.subject}
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {officeNames[r.office]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(new Date(r.requestDate)).format("MMM D")}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
+                </List>
+              </AccordionDetails>
             </Accordion>
             <Accordion>
               <AccordionSummary
@@ -119,9 +226,104 @@ const Pending = () => {
                   This Year
                 </Typography>
                 <Typography variant="subtitle2" sx={styles.summary}>
-                  0 requests
+                  {`${thisYear.length} requests`}
                 </Typography>
               </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {thisYear.length > 0
+                    ? thisYear.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton onClick={() => setRequestOpen(true)}>
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office.toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {r.subject}
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {officeNames[r.office]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(new Date(r.requestDate)).format("MMM D")}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{ bgcolor: "primary.light" }}
+              >
+                <Typography width="40%" fontWeight={600}>
+                  Older
+                </Typography>
+                <Typography variant="subtitle2" sx={styles.summary}>
+                  {`${older.length} requests`}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {older.length > 0
+                    ? older.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton onClick={() => setRequestOpen(true)}>
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office.toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {r.subject}
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {officeNames[r.office]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(new Date(r.requestDate)).format(
+                                "MMM D, YYYY"
+                              )}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
+                </List>
+              </AccordionDetails>
             </Accordion>
           </Grid>
         </Grid>
