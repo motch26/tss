@@ -41,11 +41,17 @@ const Pending = () => {
 
   const [cookies] = useCookies(["email", "type"]);
 
+  // @ts-ignore
   const [dSubject, setDSubject] = useState("");
+  // @ts-ignore
   const [dOffice, setDOffice] = useState("");
+  // @ts-ignore
   const [dOfficeEmail, setDOfficeEmail] = useState("");
+  // @ts-ignore
   const [dDate, setDDate] = useState("");
-  const [status, setStatus] = useState("");
+  // @ts-ignore
+  const [dStatus, setDStatus] = useState("");
+  const [requestBody, setRequestBody] = useState({});
 
   useEffect(() => {
     getRequests();
@@ -87,9 +93,20 @@ const Pending = () => {
             return rowYear < year;
           })
         );
-        console.log(year);
       });
   };
+
+  const getRequestBody = (office, id) => {
+    axios
+      .get(
+        `http://localhost/tss/api/getRequestBody.php?office=${office}&id=${id}`
+      )
+      .then(({ data }) => {
+        if (data) setRequestBody(data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
       <Paper sx={styles.paper} elevation={10}>
@@ -117,21 +134,27 @@ const Pending = () => {
                         <Box key={i}>
                           <ListItemButton
                             onClick={() => {
+                              getRequestBody(r.office, r.id);
+                              // @ts-ignore
                               setDSubject(r.subject);
+                              // @ts-ignore
                               setDOffice(r.office);
                               setDDate(
+                                // @ts-ignore
                                 moment(new Date(r.requestDate)).format(
                                   "MMM D, YYYY"
                                 )
                               );
+                              // @ts-ignore
                               setDOfficeEmail(emails[r.office]);
-
+                              setDStatus(r.status);
                               setRequestOpen(true);
                             }}
                           >
                             <ListItemAvatar>
                               <Avatar sx={styles.avatar}>
-                                {r.office.toUpperCase()}
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
                               </Avatar>
                             </ListItemAvatar>
                             <ListItemText
@@ -141,20 +164,33 @@ const Pending = () => {
                                   fontWeight={500}
                                   sx={{ textTransform: "capitalize" }}
                                 >
-                                  {r.subject}
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
                                 </Typography>
                               }
                               secondary={
                                 <>
                                   {"To: "}
                                   <Typography variant="body2" component="span">
-                                    {officeNames[r.office]}
+                                    {
+                                      officeNames[
+                                        // @ts-ignore
+                                        r.office
+                                      ]
+                                    }
                                   </Typography>
                                 </>
                               }
                             />
                             <Typography>
-                              {moment(new Date(r.requestDate)).format("MMM D")}
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D")}
                             </Typography>
                           </ListItemButton>
                           <Divider />
@@ -181,10 +217,28 @@ const Pending = () => {
                   {lastMonth.length > 0
                     ? lastMonth.map((r, i) => (
                         <Box key={i}>
-                          <ListItemButton onClick={() => setRequestOpen(true)}>
+                          <ListItemButton
+                            onClick={() => {
+                              // @ts-ignore
+                              setDSubject(r.subject);
+                              // @ts-ignore
+                              setDOffice(r.office);
+                              setDDate(
+                                // @ts-ignore
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              // @ts-ignore
+                              setDOfficeEmail(emails[r.office]);
+                              setDStatus(r.status);
+                              setRequestOpen(true);
+                            }}
+                          >
                             <ListItemAvatar>
                               <Avatar sx={styles.avatar}>
-                                {r.office.toUpperCase()}
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
                               </Avatar>
                             </ListItemAvatar>
                             <ListItemText
@@ -194,20 +248,33 @@ const Pending = () => {
                                   fontWeight={500}
                                   sx={{ textTransform: "capitalize" }}
                                 >
-                                  {r.subject}
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
                                 </Typography>
                               }
                               secondary={
                                 <>
                                   {"To: "}
                                   <Typography variant="body2" component="span">
-                                    {officeNames[r.office]}
+                                    {
+                                      officeNames[
+                                        // @ts-ignore
+                                        r.office
+                                      ]
+                                    }
                                   </Typography>
                                 </>
                               }
                             />
                             <Typography>
-                              {moment(new Date(r.requestDate)).format("MMM D")}
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D")}
                             </Typography>
                           </ListItemButton>
                           <Divider />
@@ -234,10 +301,28 @@ const Pending = () => {
                   {thisYear.length > 0
                     ? thisYear.map((r, i) => (
                         <Box key={i}>
-                          <ListItemButton onClick={() => setRequestOpen(true)}>
+                          <ListItemButton
+                            onClick={() => {
+                              // @ts-ignore
+                              setDSubject(r.subject);
+                              // @ts-ignore
+                              setDOffice(r.office);
+                              setDDate(
+                                // @ts-ignore
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              // @ts-ignore
+                              setDOfficeEmail(emails[r.office]);
+                              setDStatus(r.status);
+                              setRequestOpen(true);
+                            }}
+                          >
                             <ListItemAvatar>
                               <Avatar sx={styles.avatar}>
-                                {r.office.toUpperCase()}
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
                               </Avatar>
                             </ListItemAvatar>
                             <ListItemText
@@ -247,20 +332,33 @@ const Pending = () => {
                                   fontWeight={500}
                                   sx={{ textTransform: "capitalize" }}
                                 >
-                                  {r.subject}
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
                                 </Typography>
                               }
                               secondary={
                                 <>
                                   {"To: "}
                                   <Typography variant="body2" component="span">
-                                    {officeNames[r.office]}
+                                    {
+                                      officeNames[
+                                        // @ts-ignore
+                                        r.office
+                                      ]
+                                    }
                                   </Typography>
                                 </>
                               }
                             />
                             <Typography>
-                              {moment(new Date(r.requestDate)).format("MMM D")}
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D")}
                             </Typography>
                           </ListItemButton>
                           <Divider />
@@ -287,10 +385,29 @@ const Pending = () => {
                   {older.length > 0
                     ? older.map((r, i) => (
                         <Box key={i}>
-                          <ListItemButton onClick={() => setRequestOpen(true)}>
+                          <ListItemButton
+                            onClick={() => {
+                              // @ts-ignore
+
+                              setDSubject(r.subject);
+                              // @ts-ignore
+                              setDOffice(r.office);
+                              setDDate(
+                                // @ts-ignore
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              // @ts-ignore
+                              setDOfficeEmail(emails[r.office]);
+                              setDStatus(r.status);
+                              setRequestOpen(true);
+                            }}
+                          >
                             <ListItemAvatar>
                               <Avatar sx={styles.avatar}>
-                                {r.office.toUpperCase()}
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
                               </Avatar>
                             </ListItemAvatar>
                             <ListItemText
@@ -300,22 +417,33 @@ const Pending = () => {
                                   fontWeight={500}
                                   sx={{ textTransform: "capitalize" }}
                                 >
-                                  {r.subject}
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
                                 </Typography>
                               }
                               secondary={
                                 <>
                                   {"To: "}
                                   <Typography variant="body2" component="span">
-                                    {officeNames[r.office]}
+                                    {
+                                      officeNames[
+                                        // @ts-ignore
+                                        r.office
+                                      ]
+                                    }
                                   </Typography>
                                 </>
                               }
                             />
                             <Typography>
-                              {moment(new Date(r.requestDate)).format(
-                                "MMM D, YYYY"
-                              )}
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D, YYYY")}
                             </Typography>
                           </ListItemButton>
                           <Divider />
@@ -333,58 +461,142 @@ const Pending = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>Request Subject</DialogTitle>
+          <DialogTitle sx={{ textTransform: "capitalize" }}>
+            {dSubject}
+          </DialogTitle>
           <DialogContent>
             <Box sx={styles.requestContainer}>
               <Card sx={styles.card}>
                 <CardHeader
                   sx={styles.cardHeader}
-                  avatar={<Avatar sx={styles.avatar}>GO</Avatar>}
+                  avatar={
+                    <Avatar sx={styles.avatar}>{dOffice.toUpperCase()}</Avatar>
+                  }
                   action={
                     <IconButton onClick={() => setRequestOpen(false)}>
                       <Close />
                     </IconButton>
                   }
                   title="To: Guidance Office"
-                  subheader="Jun 3, 2022"
+                  subheader={moment(dDate).format("MMM D, YYYY")}
                 />
                 <CardContent>
                   <Box sx={styles.requestBody}>
-                    <Typography mb={1}>
-                      Subject: <strong>Seek Guidance Help</strong>
+                    <Typography sx={{ textTransform: "capitalize" }} mb={1}>
+                      Subject: <strong>{dSubject}</strong>
                     </Typography>
                     <Typography mb={1}>
                       {" "}
-                      Office Email: <strong>officeemail@chmsc.edu.ph</strong>
+                      Office Email: <strong>{dOfficeEmail}</strong>
                     </Typography>
                     <Typography mb={1}>
                       {" "}
-                      Date of Transaction: <strong>June 10, 2022</strong>
+                      Date of Transaction:{" "}
+                      <strong>{moment(dDate).format("MMMM D, YYYY")}</strong>
                     </Typography>
                     <Typography mb={1}>
                       Status:
                       <Typography
                         component="span"
                         variant="subtitle2"
-                        sx={styles.status}
+                        sx={{
+                          bgcolor:
+                            dStatus === "pending"
+                              ? "secondary.main"
+                              : dStatus === "approved"
+                              ? "success.main"
+                              : "error.main",
+                          px: 1,
+                          ml: 1,
+                          textTransform: "capitalize",
+                        }}
                       >
-                        Pending
+                        {dStatus}
                       </Typography>
                     </Typography>
                     <Divider />
-                    <Box sx={styles.innerRequestBody}>
-                      <Typography fontWeight={600} sx={styles.requestBodyTitle}>
-                        REQUEST BODY
-                      </Typography>
-                      <Typography p={2}>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Molestiae similique voluptatum quisquam
-                        reprehenderit obcaecati pariatur animi quis! Cum eveniet
-                        sapiente vel quia debitis unde provident sequi!
-                        Asperiores velit, cum dignissimos voluptatem fugit
-                        necessitatibus inventore. Obcaecati asperiores hic porro
-                        numquam dolor!
-                      </Typography>
+                    <Box>
+                      {dOffice === "osa" ? (
+                        <Paper elevation={20} sx={{ p: 1, mt: 2 }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              bgcolor: "secondary.light",
+                              textAlign: "center",
+                            }}
+                          >
+                            Incident Report Form
+                          </Typography>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              mt: 1,
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Complainant:{" "}
+                              <strong>{requestBody.complainant}</strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              Respondent:{" "}
+                              <strong>{requestBody.respondent}</strong>
+                            </Typography>
+                            <Divider />
+
+                            <Box sx={{ mt: 1 }}>
+                              <Typography variant="body1">
+                                <strong>Incident Details</strong>
+                              </Typography>
+                              <Grid container columnSpacing={1}>
+                                <Grid item xs={6}>
+                                  <Typography>
+                                    Date:{" "}
+                                    <strong>
+                                      {moment(requestBody.dateTime).format(
+                                        "MMM D, YYYY"
+                                      )}
+                                    </strong>
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <Typography>
+                                    Time:{" "}
+                                    <strong>
+                                      {moment(requestBody.dateTime).format(
+                                        "hh:mm A"
+                                      )}
+                                    </strong>
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                  <Typography>
+                                    Place: <strong>{requestBody.place}</strong>
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                              <Divider />
+                              <Typography sx={{ mt: 1 }}>
+                                <strong>Narration:</strong>
+                              </Typography>
+                              <Typography variant="caption">
+                                {requestBody.narration}
+                              </Typography>
+                              <Divider />
+                              <Typography sx={{ mt: 1 }}>
+                                <strong>Witness(es):</strong>
+                                {requestBody.witnesses
+                                  .split(",")
+                                  .map((w, i) => (
+                                    <Box>
+                                      <Typography>{w}</Typography>
+                                    </Box>
+                                  ))}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Paper>
+                      ) : null}
                     </Box>
                   </Box>
                 </CardContent>
@@ -439,26 +651,6 @@ const styles = {
   },
   cardHeader: {
     bgcolor: "primary.light",
-  },
-  requestBody: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  innerRequestBody: {
-    border: "1px solid",
-    mt: 2,
-    borderColor: "primary.main",
-  },
-  requestBodyTitle: {
-    textAlign: "center",
-    bgcolor: "secondary.main",
-
-    p: 1,
-  },
-  status: {
-    bgcolor: "secondary.main",
-    px: 1,
-    ml: 1,
   },
 };
 export default Pending;
