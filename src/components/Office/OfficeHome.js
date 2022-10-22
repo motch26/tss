@@ -1,4 +1,4 @@
-import { EventNote, Menu } from "@mui/icons-material";
+import { EventNote, Logout } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -7,26 +7,86 @@ import {
   ButtonGroup,
   Container,
   IconButton,
-  TextField,
+  ListItemIcon,
+  Menu,
+  MenuItem,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
 
 import React, { useState } from "react";
+import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const OfficeHome = () => {
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "family_name",
+    "given_name",
+    "picture",
+    "name",
+    "email",
+    "office",
+  ]);
+
+  const [anchor, setAnchor] = useState(null);
+
+  const logout = () => {
+    removeCookie("family_name", { path: "/" });
+    removeCookie("given_name", { path: "/" });
+    removeCookie("picture", { path: "/" });
+    removeCookie("name", { path: "/" });
+    removeCookie("email", { path: "/" });
+    removeCookie("office", { path: "/" });
+
+    navigate("/office");
+  };
   const navigate = useNavigate();
-  const [isCompose, setCompose] = useState(false);
-
-  const [to, setTo] = useState("");
-  const [transacDate, setTransacDate] = useState(new Date());
-
-  const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
     <Box sx={styles.body}>
+      <Menu
+        anchorEl={anchor}
+        id="account-menu"
+        open={Boolean(anchor)}
+        onClose={() => setAnchor(null)}
+        onClick={() => setAnchor(null)}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <MenuItem onClick={() => logout()}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
       <AppBar position="static">
         <Container>
           <Toolbar>
@@ -38,30 +98,26 @@ const OfficeHome = () => {
                 sx={styles.btns}
                 onClick={() => navigate("/office/home")}
               >
-                Pending
+                Requests
               </Button>
               <Button
                 color="inherit"
                 sx={styles.btns}
                 onClick={() => navigate("/office/home/calendar")}
               >
-                Approved
+                Schedule
               </Button>
             </ButtonGroup>
-            <Typography variant="h6">Guidance Office</Typography>
-            <Tooltip title="Guidance Office">
-              <Avatar sx={styles.avatar}>GO</Avatar>
+            <Typography variant="h6">{cookies.name}</Typography>
+            <Tooltip title={cookies.given_name}>
+              <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
+                <Avatar
+                  alt={cookies.name}
+                  src={cookies.picture}
+                  sx={styles.avatar}
+                />
+              </IconButton>
             </Tooltip>
-            <IconButton
-              sx={{
-                color: "white",
-                display: { md: "none", xs: "block" },
-                ml: "auto",
-              }}
-              onClick={() => setOpenDrawer(true)}
-            >
-              <Menu />
-            </IconButton>
           </Toolbar>
         </Container>
       </AppBar>

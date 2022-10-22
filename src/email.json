@@ -1,12 +1,16 @@
 {
-  "bsis": "almark.duma-op@chmsu.edu.ph",
-  "cit": "almark.duma-op@chmsu.edu.ph",
-  "osa": "almark.duma-op@chmsu.edu.ph",
-  "devEmails": [
-    { "bsis": "almark.duma-op@chmsu.edu.ph" },
-    { "cit": "almark.duma-op@chmsu.edu.ph" },
-    { "osa": "almark.duma-op@chmsu.edu.ph" }
-  ],
+  "bsis": {
+    "email": "almark.duma-op@chmsu.edu.ph",
+    "name": "BSIS Program Chair"
+  },
+  "cit": {
+    "email": "almark.duma-op@chmsu.edu.ph",
+    "name": "CIT Dean's Office"
+  },
+  "osa": {
+    "email": "almark.duma-op@chmsu.edu.ph",
+    "name": "Office of the Students Affair"
+  },
   "emails": [
     { "bsis": "bsis.talisay@chmsc.edu.ph" },
     { "cit": "college.ict@chmsc.edu.ph" },

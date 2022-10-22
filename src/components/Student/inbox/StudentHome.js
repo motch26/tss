@@ -1,5 +1,4 @@
 import {
-  Close,
   Email,
   EventNote,
   Forward,
@@ -42,6 +41,46 @@ import axios from "axios";
 import moment from "moment";
 
 const StudentHome = () => {
+  const [thisMonth, setThisMonth] = useState([]);
+  const [lastMonth, setLastMonth] = useState([]);
+  const [thisYear, setThisYear] = useState([]);
+  const [older, setOlder] = useState([]);
+  const getRequests = () => {
+    axios
+      .get(
+        `http://localhost/tss/api/getRequests.php?currentId=${cookies.currentId}`
+      )
+      .then(({ data }) => {
+        // if (data) setRequests(data);
+        const month = new Date().getMonth();
+        const year = new Date().getFullYear();
+        setThisMonth(
+          data.filter((d) => {
+            const rowMonth = new Date(d.requestDate).getMonth();
+            return rowMonth === month;
+          })
+        );
+        setLastMonth(
+          data.filter((d) => {
+            const rowMonth = new Date(d.requestDate).getMonth();
+            return rowMonth === month - 1;
+          })
+        );
+        setThisYear(
+          data.filter((d) => {
+            const rowMonth = new Date(d.requestDate).getMonth();
+            const rowYear = new Date(d.requestDate).getFullYear();
+            return rowMonth < month - 1 && rowYear === year;
+          })
+        );
+        setOlder(
+          data.filter((d) => {
+            const rowYear = new Date(d.requestDate).getFullYear();
+            return rowYear < year;
+          })
+        );
+      });
+  };
   const [cookies, setCookie, removeCookie] = useCookies([
     "family_name",
     "given_name",
@@ -50,6 +89,7 @@ const StudentHome = () => {
     "email",
     "userId",
     "type",
+    "currentId",
   ]);
   const navigate = useNavigate();
   const [isCompose, setCompose] = useState(false);
@@ -68,6 +108,7 @@ const StudentHome = () => {
     removeCookie("email", { path: "/" });
     removeCookie("userId", { path: "/" });
     removeCookie("type", { path: "/" });
+    removeCookie("currentId", { path: "/" });
 
     navigate("/");
   };
@@ -75,9 +116,7 @@ const StudentHome = () => {
   const submit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    formData.append("type", cookies.type);
-    formData.append("senderName", cookies.name);
-    formData.append("senderEmail", cookies.email);
+    formData.append("userId", cookies.currentId);
     if (formData.has("osaDateTime")) {
       const dateTimeStr = formData.get("osaDateTime");
 
@@ -90,6 +129,7 @@ const StudentHome = () => {
       .post("http://localhost/tss/api/compose.php", formData)
       .then(({ data }) => {
         if (data) {
+          getRequests();
           setTo("");
           setCompose(false);
           setDisplaySnackbar(true);
@@ -103,6 +143,7 @@ const StudentHome = () => {
       <Dialog
         open={isCompose}
         onClose={() => {
+          getRequests();
           setTo("");
           setCompose(false);
         }}
@@ -115,7 +156,7 @@ const StudentHome = () => {
             component="form"
             onSubmit={submit}
             onKeyDown={(e) => {
-              if (e.keyCode == 13) e.preventDefault();
+              if (e.keyCode === 13) e.preventDefault();
             }}
           >
             <Grid container mt={2} gap={1}>
@@ -261,7 +302,7 @@ const StudentHome = () => {
               <MenuIcon />
             </IconButton>
           </Toolbar>
-          <Drawer
+          {/* <Drawer
             anchor="right"
             open={openDrawer}
             onClose={() => setOpenDrawer(false)}
@@ -287,12 +328,14 @@ const StudentHome = () => {
                 </Box>
               </ListItemButton>
             </List>
-          </Drawer>
+          </Drawer> */}
         </Container>
       </AppBar>
       <Box>
         <Container maxWidth="md">
-          <Outlet />
+          <Outlet
+            context={[getRequests, thisMonth, lastMonth, thisYear, older]}
+          />
         </Container>
       </Box>
       <Snackbar

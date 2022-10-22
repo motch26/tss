@@ -23,23 +23,21 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { useEffect } from "react";
 import moment from "moment";
 import emails from "./../../../email.json";
+import { useOutletContext } from "react-router-dom";
+
 const Pending = () => {
+  // @ts-ignore
+  const [getRequests, thisMonth, lastMonth, thisYear, older] =
+    useOutletContext();
   const officeNames = {
     osa: "Office of the Student Affairs",
     cit: "CIT Dean's Office",
     bsis: "BSIS Program Chairman",
   };
   const [isRequestOpen, setRequestOpen] = useState(false);
-  const [thisMonth, setThisMonth] = useState([]);
-  const [lastMonth, setLastMonth] = useState([]);
-  const [thisYear, setThisYear] = useState([]);
-  const [older, setOlder] = useState([]);
-
-  const [cookies] = useCookies(["email", "type"]);
 
   // @ts-ignore
   const [dSubject, setDSubject] = useState("");
@@ -56,45 +54,6 @@ const Pending = () => {
   useEffect(() => {
     getRequests();
   }, []);
-
-  const getRequests = () => {
-    axios
-      .get(
-        `http://localhost/tss/api/getRequests.php?email=${encodeURIComponent(
-          cookies.email
-        )}&type=${cookies.type}`
-      )
-      .then(({ data }) => {
-        // if (data) setRequests(data);
-        const month = new Date().getMonth();
-        const year = new Date().getFullYear();
-        setThisMonth(
-          data.filter((d) => {
-            const rowMonth = new Date(d.requestDate).getMonth();
-            return rowMonth === month;
-          })
-        );
-        setLastMonth(
-          data.filter((d) => {
-            const rowMonth = new Date(d.requestDate).getMonth();
-            return rowMonth === month - 1;
-          })
-        );
-        setThisYear(
-          data.filter((d) => {
-            const rowMonth = new Date(d.requestDate).getMonth();
-            const rowYear = new Date(d.requestDate).getFullYear();
-            return rowMonth < month - 1 && rowYear === year;
-          })
-        );
-        setOlder(
-          data.filter((d) => {
-            const rowYear = new Date(d.requestDate).getFullYear();
-            return rowYear < year;
-          })
-        );
-      });
-  };
 
   const getRequestBody = (office, id) => {
     axios
@@ -146,7 +105,7 @@ const Pending = () => {
                                 )
                               );
                               // @ts-ignore
-                              setDOfficeEmail(emails[r.office]);
+                              setDOfficeEmail(emails[r.office]["email"]);
                               setDStatus(r.status);
                               setRequestOpen(true);
                             }}
@@ -174,12 +133,7 @@ const Pending = () => {
                                 <>
                                   {"To: "}
                                   <Typography variant="body2" component="span">
-                                    {
-                                      officeNames[
-                                        // @ts-ignore
-                                        r.office
-                                      ]
-                                    }
+                                    {emails[r.office]["name"]}
                                   </Typography>
                                 </>
                               }
@@ -191,259 +145,6 @@ const Pending = () => {
                                   r.requestDate
                                 )
                               ).format("MMM D")}
-                            </Typography>
-                          </ListItemButton>
-                          <Divider />
-                        </Box>
-                      ))
-                    : null}
-                </List>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{ bgcolor: "primary.light" }}
-              >
-                <Typography width="40%" fontWeight={600}>
-                  Last Month
-                </Typography>
-                <Typography variant="subtitle2" sx={styles.summary}>
-                  {`${lastMonth.length} requests`}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <List>
-                  {lastMonth.length > 0
-                    ? lastMonth.map((r, i) => (
-                        <Box key={i}>
-                          <ListItemButton
-                            onClick={() => {
-                              // @ts-ignore
-                              setDSubject(r.subject);
-                              // @ts-ignore
-                              setDOffice(r.office);
-                              setDDate(
-                                // @ts-ignore
-                                moment(new Date(r.requestDate)).format(
-                                  "MMM D, YYYY"
-                                )
-                              );
-                              // @ts-ignore
-                              setDOfficeEmail(emails[r.office]);
-                              setDStatus(r.status);
-                              setRequestOpen(true);
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar sx={styles.avatar}>
-                                {r.office // @ts-ignore
-                                  .toUpperCase()}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  sx={{ textTransform: "capitalize" }}
-                                >
-                                  {
-                                    // @ts-ignore
-                                    r.subject
-                                  }
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  {"To: "}
-                                  <Typography variant="body2" component="span">
-                                    {
-                                      officeNames[
-                                        // @ts-ignore
-                                        r.office
-                                      ]
-                                    }
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <Typography>
-                              {moment(
-                                new Date(
-                                  // @ts-ignore
-                                  r.requestDate
-                                )
-                              ).format("MMM D")}
-                            </Typography>
-                          </ListItemButton>
-                          <Divider />
-                        </Box>
-                      ))
-                    : null}
-                </List>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{ bgcolor: "primary.light" }}
-              >
-                <Typography width="40%" fontWeight={600}>
-                  This Year
-                </Typography>
-                <Typography variant="subtitle2" sx={styles.summary}>
-                  {`${thisYear.length} requests`}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <List>
-                  {thisYear.length > 0
-                    ? thisYear.map((r, i) => (
-                        <Box key={i}>
-                          <ListItemButton
-                            onClick={() => {
-                              // @ts-ignore
-                              setDSubject(r.subject);
-                              // @ts-ignore
-                              setDOffice(r.office);
-                              setDDate(
-                                // @ts-ignore
-                                moment(new Date(r.requestDate)).format(
-                                  "MMM D, YYYY"
-                                )
-                              );
-                              // @ts-ignore
-                              setDOfficeEmail(emails[r.office]);
-                              setDStatus(r.status);
-                              setRequestOpen(true);
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar sx={styles.avatar}>
-                                {r.office // @ts-ignore
-                                  .toUpperCase()}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  sx={{ textTransform: "capitalize" }}
-                                >
-                                  {
-                                    // @ts-ignore
-                                    r.subject
-                                  }
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  {"To: "}
-                                  <Typography variant="body2" component="span">
-                                    {
-                                      officeNames[
-                                        // @ts-ignore
-                                        r.office
-                                      ]
-                                    }
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <Typography>
-                              {moment(
-                                new Date(
-                                  // @ts-ignore
-                                  r.requestDate
-                                )
-                              ).format("MMM D")}
-                            </Typography>
-                          </ListItemButton>
-                          <Divider />
-                        </Box>
-                      ))
-                    : null}
-                </List>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{ bgcolor: "primary.light" }}
-              >
-                <Typography width="40%" fontWeight={600}>
-                  Older
-                </Typography>
-                <Typography variant="subtitle2" sx={styles.summary}>
-                  {`${older.length} requests`}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <List>
-                  {older.length > 0
-                    ? older.map((r, i) => (
-                        <Box key={i}>
-                          <ListItemButton
-                            onClick={() => {
-                              // @ts-ignore
-
-                              setDSubject(r.subject);
-                              // @ts-ignore
-                              setDOffice(r.office);
-                              setDDate(
-                                // @ts-ignore
-                                moment(new Date(r.requestDate)).format(
-                                  "MMM D, YYYY"
-                                )
-                              );
-                              // @ts-ignore
-                              setDOfficeEmail(emails[r.office]);
-                              setDStatus(r.status);
-                              setRequestOpen(true);
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar sx={styles.avatar}>
-                                {r.office // @ts-ignore
-                                  .toUpperCase()}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  sx={{ textTransform: "capitalize" }}
-                                >
-                                  {
-                                    // @ts-ignore
-                                    r.subject
-                                  }
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  {"To: "}
-                                  <Typography variant="body2" component="span">
-                                    {
-                                      officeNames[
-                                        // @ts-ignore
-                                        r.office
-                                      ]
-                                    }
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <Typography>
-                              {moment(
-                                new Date(
-                                  // @ts-ignore
-                                  r.requestDate
-                                )
-                              ).format("MMM D, YYYY")}
                             </Typography>
                           </ListItemButton>
                           <Divider />
@@ -457,7 +158,10 @@ const Pending = () => {
         </Grid>
         <Dialog
           open={isRequestOpen}
-          onClose={() => setRequestOpen(false)}
+          onClose={() => {
+            getRequests();
+            setRequestOpen(false);
+          }}
           maxWidth="sm"
           fullWidth
         >
@@ -477,7 +181,9 @@ const Pending = () => {
                       <Close />
                     </IconButton>
                   }
-                  title="To: Guidance Office"
+                  title={`To: ${
+                    isRequestOpen ? emails[dOffice]["name"] : null
+                  }`}
                   subheader={moment(dDate).format("MMM D, YYYY")}
                 />
                 <CardContent>
@@ -585,15 +291,109 @@ const Pending = () => {
                               <Divider />
                               <Typography sx={{ mt: 1 }}>
                                 <strong>Witness(es):</strong>
-                                {requestBody.witnesses
-                                  .split(",")
-                                  .map((w, i) => (
-                                    <Box>
-                                      <Typography>{w}</Typography>
-                                    </Box>
-                                  ))}
+                                {requestBody.hasOwnProperty("witnesses")
+                                  ? requestBody.witnesses
+                                      .split(",")
+                                      .map((w, i) => (
+                                        <Box>
+                                          <Typography>{w}</Typography>
+                                        </Box>
+                                      ))
+                                  : null}
                               </Typography>
                             </Box>
+                          </Box>
+                        </Paper>
+                      ) : null}
+                      {dOffice === "cit" ? (
+                        <Paper elevation={20} sx={{ p: 1, mt: 2 }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              bgcolor: "secondary.light",
+                              textAlign: "center",
+                            }}
+                          >
+                            CIT Office Form
+                          </Typography>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              mt: 1,
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Course:{" "}
+                              <strong>
+                                {requestBody.hasOwnProperty("course")
+                                  ? requestBody.course.toUpperCase()
+                                  : null}
+                              </strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              Year Graduated:{" "}
+                              <strong>{requestBody.year}</strong>
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              sx={{ textTransform: "capitalize" }}
+                            >
+                              Transaction Type:{" "}
+                              <strong>{requestBody.transacType}</strong>
+                            </Typography>
+                            <Typography sx={{ mt: 1 }}>
+                              <strong>Additional Message:</strong>
+                            </Typography>
+                            <Typography variant="caption">
+                              {requestBody.message}
+                            </Typography>
+                          </Box>
+                        </Paper>
+                      ) : null}
+                      {dOffice === "bsis" ? (
+                        <Paper elevation={20} sx={{ p: 1, mt: 2 }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              bgcolor: "secondary.light",
+                              textAlign: "center",
+                            }}
+                          >
+                            BSIS Office Form
+                          </Typography>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              mt: 1,
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Typography variant="body1">
+                              Course:{" "}
+                              <strong>
+                                {requestBody.hasOwnProperty("course")
+                                  ? requestBody.course.toUpperCase()
+                                  : null}
+                              </strong>
+                            </Typography>
+                            <Typography variant="body1">
+                              Year Graduated:{" "}
+                              <strong>{requestBody.year}</strong>
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              sx={{ textTransform: "capitalize" }}
+                            >
+                              Transaction Type:{" "}
+                              <strong>{requestBody.transacType}</strong>
+                            </Typography>
+                            <Typography sx={{ mt: 1 }}>
+                              <strong>Additional Message:</strong>
+                            </Typography>
+                            <Typography variant="caption">
+                              {requestBody.message}
+                            </Typography>
                           </Box>
                         </Paper>
                       ) : null}

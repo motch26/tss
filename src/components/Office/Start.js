@@ -1,5 +1,7 @@
+// @ts-ignore
 import { EventNote, Google } from "@mui/icons-material";
 import {
+  Alert,
   AppBar,
   Box,
   Button,
@@ -9,22 +11,62 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  MenuItem,
+  Select,
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import jwt_decode from "jwt-decode";
+import { useCookies } from "react-cookie";
+import emails from "./../../email.json";
 const OfficeStart = () => {
   const navigate = useNavigate();
+  // @ts-ignore
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "family_name",
+    "given_name",
+    "picture",
+    "name",
+    "email",
+    "office",
+  ]);
 
   const [isLogin, setIsLogin] = useState(false);
   const [isAbout, setIsAbout] = useState(false);
 
-  const login = () => {
-    navigate("/office/home");
-  };
+  const [office, setOffice] = useState("");
+  const [wrongLogin, setWrongLogin] = useState(false);
 
+  const loginSuccessful = (res) => {
+    const userObject = jwt_decode(res.credential);
+    // @ts-ignore
+    const { family_name, given_name, picture, name, email } = userObject;
+    if (emails[office]["email"] === email) {
+      const setCookies = (_name, _value) => {
+        setCookie(_name, _value, {
+          path: "/",
+          expires: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+        });
+      };
+      setCookies("family_name", family_name);
+      setCookies("given_name", given_name);
+      setCookies("name", name);
+      setCookies("email", email);
+      setCookies("picture", picture);
+      setCookies("office", office);
+
+      navigate("/office/home");
+    } else setWrongLogin(true);
+  };
+  const checkCookie = () => {
+    if (cookies.office) navigate("/office/home");
+  };
+  useEffect(() => {
+    checkCookie();
+  }, []);
   return (
     <Box sx={styles.body}>
       <AppBar position="static">
@@ -71,21 +113,53 @@ const OfficeStart = () => {
       <Dialog
         fullWidth
         open={isLogin}
-        onClose={() => setIsLogin(false)}
+        onClose={() => {
+          setOffice("");
+          setWrongLogin(false);
+          setIsLogin(false);
+        }}
         maxWidth="xs"
       >
         <DialogTitle sx={styles.dialogTitle}>Login</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
-            <Button
-              color="secondary"
-              variant="contained"
-              sx={{ display: "flex" }}
-              onClick={login}
-              startIcon={<Google />}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              pt: 1,
+            }}
+          >
+            <strong>Office:</strong>
+            <Select
+              fullWidth
+              value={office}
+              onChange={(e) => setOffice(e.target.value)}
             >
-              Login via Google
-            </Button>
+              <MenuItem value="bsis">BSIS Program Chair</MenuItem>
+              <MenuItem value="cit">CIT Dean's Office</MenuItem>
+              <MenuItem value="osa">Office of the Students Affairs</MenuItem>
+            </Select>
+            <Box
+              sx={{
+                display: office ? "flex" : "none",
+                pt: 1,
+                justifyContent: "flex-end",
+              }}
+            >
+              <GoogleLogin
+                onSuccess={loginSuccessful}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
+            </Box>
+            <Alert
+              severity="error"
+              sx={{ mt: 1, display: wrongLogin ? "flex" : "none" }}
+            >
+              Wrong credentials!
+            </Alert>
           </Box>
         </DialogContent>
       </Dialog>

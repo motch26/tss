@@ -33,9 +33,10 @@ const StudentStart = () => {
     "email",
     "userId",
     "type",
+    "currentId",
   ]);
   const checkCookie = () => {
-    if (cookies.email) navigate("/home");
+    if (cookies.type) navigate("/home");
   };
   useEffect(() => {
     checkCookie();
@@ -52,30 +53,33 @@ const StudentStart = () => {
     const userObject = jwt_decode(res.credential);
     const { family_name, given_name, picture, name, email } = userObject;
 
-    const setCookies = (_name, _value) => {
+    const setIndividualCookie = (_name, _value) => {
       setCookie(_name, _value, {
         path: "/",
         expires: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
       });
     };
-    setCookies("family_name", family_name);
-    setCookies("given_name", given_name);
-    setCookies("name", name);
-    setCookies("email", email);
-    setCookies("picture", picture);
-    setCookies("type", type);
-    setCookies("userId", userId);
+    setIndividualCookie("family_name", family_name);
+    setIndividualCookie("given_name", given_name);
+    setIndividualCookie("name", name);
+    setIndividualCookie("email", email);
+    setIndividualCookie("picture", picture);
+    setIndividualCookie("type", type);
+    setIndividualCookie("userId", userId);
 
     const formData = new FormData();
     formData.append("email", email);
     formData.append("type", type);
     formData.append("name", name);
     formData.append("userId", userId);
-
+    formData.append("picture", picture);
     axios
       .post("http://localhost/tss/api/checkUser.php", formData)
       .then(({ data }) => {
-        if (data) navigate("/home");
+        if (data) {
+          setIndividualCookie("currentId", data);
+          navigate("/home");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -189,8 +193,8 @@ const StudentStart = () => {
           >
             <GoogleLogin
               onSuccess={loginSuccessful}
-              onError={() => {
-                console.log("Login Failed");
+              onError={(r) => {
+                console.log(r);
               }}
             />
           </Box>
