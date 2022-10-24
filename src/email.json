@@ -10,10 +10,5 @@
   "osa": {
     "email": "almark.duma-op@chmsu.edu.ph",
     "name": "Office of the Students Affair"
-  },
-  "emails": [
-    { "bsis": "bsis.talisay@chmsc.edu.ph" },
-    { "cit": "college.ict@chmsc.edu.ph" },
-    { "osa": "osa.talisay@chmsc.edu.ph" }
-  ]
+  }
 }

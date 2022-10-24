@@ -107,11 +107,15 @@ const OfficePending = () => {
       .catch((err) => console.log(err));
   };
 
-  const getUserInfo = async (id) => {
-    const data = await axios.get(
-      `http://localhost/tss/api/getUserInfo.php?id=${id}`
-    );
-    return data;
+  const getUserInfo = (id) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`http://localhost/tss/api/getUserInfo.php?id=${id}`)
+        .then((d) => {
+          resolve(d);
+        })
+        .catch((err) => reject(err));
+    });
   };
 
   const submitUpdate = (e) => {
@@ -143,6 +147,76 @@ const OfficePending = () => {
     setRequestOpen(false);
   };
 
+  const ListItem = ({ r }) => {
+    const [userInfo, setUserInfo] = useState({});
+    useEffect(() => {
+      getUserInfo(r.userId).then((d) => setUserInfo(d));
+    }, [r]);
+
+    return (
+      <Box>
+        <ListItemButton
+          onClick={() => {
+            getRequestBody(r.id, r.office);
+            setDID(r.id);
+            setDOffice(r.office);
+            // @ts-ignore
+            setDSubject(r.subject);
+            // @ts-ignore
+            setdSenderPicture(userInfo.picture); //picture key is still blank after render
+            // @ts-ignore
+            setDSenderName(userInfo.name); //name key is still blank after render
+            setDDate(
+              // @ts-ignore
+              moment(new Date(r.requestDate)).format("MMM D, YYYY")
+            );
+            // @ts-ignore
+            setdSenderEmail(userInfo.email);
+            setDStatus(r.status);
+            setRequestOpen(true);
+          }}
+        >
+          <ListItemAvatar>
+            <Avatar sx={styles.avatar}>
+              <img src={userInfo.picture} />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={
+              <Typography
+                variant="body1"
+                fontWeight={500}
+                sx={{ textTransform: "capitalize" }}
+              >
+                {
+                  // @ts-ignore
+                  r.subject
+                }
+              </Typography>
+            }
+            secondary={
+              <>
+                {"From: "}
+                <Typography variant="body2" component="span">
+                  {userInfo.name}
+                </Typography>
+              </>
+            }
+          />
+          <Typography>
+            {moment(
+              new Date(
+                // @ts-ignore
+                r.requestDate
+              )
+            ).format("MMM D")}
+          </Typography>
+        </ListItemButton>
+        <Divider />
+      </Box>
+    );
+  };
+
   return (
     <>
       <Paper sx={styles.paper} elevation={10}>
@@ -166,11 +240,12 @@ const OfficePending = () => {
               <AccordionDetails>
                 <List>
                   {thisMonth.length > 0
-                    ? thisMonth.map(async (r, i) => {})
+                    ? thisMonth.map((r, i) => <ListItem key={i} r={r} />)
                     : null}
                 </List>
               </AccordionDetails>
             </Accordion>
+
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMore />}
