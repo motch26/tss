@@ -107,15 +107,15 @@ const OfficePending = () => {
       .catch((err) => console.log(err));
   };
 
-  const getUserInfo = (id) => {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`http://localhost/tss/api/getUserInfo.php?id=${id}`)
-        .then((d) => {
-          resolve(d);
-        })
-        .catch((err) => reject(err));
-    });
+  const getUserInfo = async (id) => {
+    try {
+      const res = await axios.get(
+        `http://localhost/tss/api/getUserInfo.php?id=${id}`
+      );
+      return res;
+    } catch (error) {
+      return error;
+    }
   };
 
   const submitUpdate = (e) => {
@@ -126,7 +126,7 @@ const OfficePending = () => {
     formData.append("updatedStatus", updatedStatus);
     formData.append(
       "updatedDateTime",
-      moment(updatedDateTime).format("YYYY-MM-DD")
+      moment(updatedDateTime).format("YYYY-MM-DD hh:mm:ss")
     );
     axios
       .post("http://localhost/tss/api/updateRequest.php", formData)
@@ -150,8 +150,8 @@ const OfficePending = () => {
   const ListItem = ({ r }) => {
     const [userInfo, setUserInfo] = useState({});
     useEffect(() => {
-      getUserInfo(r.userId).then((d) => setUserInfo(d));
-    }, [r]);
+      getUserInfo(r.userId).then((d) => setUserInfo(d.data));
+    }, []);
 
     return (
       <Box>
@@ -261,69 +261,7 @@ const OfficePending = () => {
               <AccordionDetails>
                 <List>
                   {lastMonth.length > 0
-                    ? lastMonth.map((r, i) => (
-                        <Box key={i}>
-                          <ListItemButton
-                            onClick={() => {
-                              getRequestBody(r.id, r.office);
-                              setDID(r.id);
-                              setDOffice(r.office);
-                              // @ts-ignore
-                              setDSubject(r.subject);
-                              setdSenderPicture(r.senderPicture);
-                              // @ts-ignore
-                              setDSenderName(r.senderName);
-                              setDDate(
-                                // @ts-ignore
-                                moment(new Date(r.requestDate)).format(
-                                  "MMM D, YYYY"
-                                )
-                              );
-                              // @ts-ignore
-                              setdSenderEmail(r.senderEmail);
-                              setDStatus(r.status);
-                              setRequestOpen(true);
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar sx={styles.avatar}>
-                                <img src={r.senderPicture} />
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  sx={{ textTransform: "capitalize" }}
-                                >
-                                  {
-                                    // @ts-ignore
-                                    r.subject
-                                  }
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  {"From: "}
-                                  <Typography variant="body2" component="span">
-                                    {r.senderName}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <Typography>
-                              {moment(
-                                new Date(
-                                  // @ts-ignore
-                                  r.requestDate
-                                )
-                              ).format("MMM D")}
-                            </Typography>
-                          </ListItemButton>
-                          <Divider />
-                        </Box>
-                      ))
+                    ? lastMonth.map((r, i) => <ListItem key={i} r={r} />)
                     : null}
                 </List>
               </AccordionDetails>
@@ -343,69 +281,7 @@ const OfficePending = () => {
               <AccordionDetails>
                 <List>
                   {thisYear.length > 0
-                    ? thisYear.map((r, i) => (
-                        <Box key={i}>
-                          <ListItemButton
-                            onClick={() => {
-                              getRequestBody(r.id, r.office);
-                              setDID(r.id);
-                              setDOffice(r.office);
-                              // @ts-ignore
-                              setDSubject(r.subject);
-                              setdSenderPicture(r.senderPicture);
-                              // @ts-ignore
-                              setDSenderName(r.senderName);
-                              setDDate(
-                                // @ts-ignore
-                                moment(new Date(r.requestDate)).format(
-                                  "MMM D, YYYY"
-                                )
-                              );
-                              // @ts-ignore
-                              setdSenderEmail(r.senderEmail);
-                              setDStatus(r.status);
-                              setRequestOpen(true);
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar sx={styles.avatar}>
-                                <img src={r.senderPicture} />
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  sx={{ textTransform: "capitalize" }}
-                                >
-                                  {
-                                    // @ts-ignore
-                                    r.subject
-                                  }
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  {"From: "}
-                                  <Typography variant="body2" component="span">
-                                    {r.senderName}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <Typography>
-                              {moment(
-                                new Date(
-                                  // @ts-ignore
-                                  r.requestDate
-                                )
-                              ).format("MMM D")}
-                            </Typography>
-                          </ListItemButton>
-                          <Divider />
-                        </Box>
-                      ))
+                    ? thisYear.map((r, i) => <ListItem key={i} r={r} />)
                     : null}
                 </List>
               </AccordionDetails>
@@ -425,70 +301,7 @@ const OfficePending = () => {
               <AccordionDetails>
                 <List>
                   {older.length > 0
-                    ? older.map((r, i) => (
-                        <Box key={i}>
-                          <ListItemButton
-                            onClick={() => {
-                              getRequestBody(r.id, r.office);
-                              setDID(r.id);
-
-                              setDOffice(r.office);
-                              // @ts-ignore
-                              setDSubject(r.subject);
-                              setdSenderPicture(r.senderPicture);
-                              // @ts-ignore
-                              setDSenderName(r.senderName);
-                              setDDate(
-                                // @ts-ignore
-                                moment(new Date(r.requestDate)).format(
-                                  "MMM D, YYYY"
-                                )
-                              );
-                              // @ts-ignore
-                              setdSenderEmail(r.senderEmail);
-                              setDStatus(r.status);
-                              setRequestOpen(true);
-                            }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar sx={styles.avatar}>
-                                <img src={r.senderPicture} />
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  sx={{ textTransform: "capitalize" }}
-                                >
-                                  {
-                                    // @ts-ignore
-                                    r.subject
-                                  }
-                                </Typography>
-                              }
-                              secondary={
-                                <>
-                                  {"From: "}
-                                  <Typography variant="body2" component="span">
-                                    {r.senderName}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                            <Typography>
-                              {moment(
-                                new Date(
-                                  // @ts-ignore
-                                  r.requestDate
-                                )
-                              ).format("MMM D")}
-                            </Typography>
-                          </ListItemButton>
-                          <Divider />
-                        </Box>
-                      ))
+                    ? older.map((r, i) => <ListItem key={i} r={r} />)
                     : null}
                 </List>
               </AccordionDetails>

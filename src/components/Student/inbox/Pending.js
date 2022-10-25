@@ -154,6 +154,246 @@ const Pending = () => {
                 </List>
               </AccordionDetails>
             </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{ bgcolor: "primary.light" }}
+              >
+                <Typography width="40%" fontWeight={600}>
+                  Last Month
+                </Typography>
+                <Typography variant="subtitle2" sx={styles.summary}>
+                  {`${lastMonth.length} requests`}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {lastMonth.length > 0
+                    ? lastMonth.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton
+                            onClick={() => {
+                              getRequestBody(r.office, r.id);
+                              // @ts-ignore
+                              setDSubject(r.subject);
+                              // @ts-ignore
+                              setDOffice(r.office);
+                              setDDate(
+                                // @ts-ignore
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              // @ts-ignore
+                              setDOfficeEmail(emails[r.office]["email"]);
+                              setDStatus(r.status);
+                              setRequestOpen(true);
+                            }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {emails[r.office]["name"]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D")}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{ bgcolor: "primary.light" }}
+              >
+                <Typography width="40%" fontWeight={600}>
+                  This Year
+                </Typography>
+                <Typography variant="subtitle2" sx={styles.summary}>
+                  {`${thisYear.length} requests`}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {thisYear.length > 0
+                    ? thisYear.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton
+                            onClick={() => {
+                              getRequestBody(r.office, r.id);
+                              // @ts-ignore
+                              setDSubject(r.subject);
+                              // @ts-ignore
+                              setDOffice(r.office);
+                              setDDate(
+                                // @ts-ignore
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              // @ts-ignore
+                              setDOfficeEmail(emails[r.office]["email"]);
+                              setDStatus(r.status);
+                              setRequestOpen(true);
+                            }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {emails[r.office]["name"]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D")}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{ bgcolor: "primary.light" }}
+              >
+                <Typography width="40%" fontWeight={600}>
+                  Older
+                </Typography>
+                <Typography variant="subtitle2" sx={styles.summary}>
+                  {`${older.length} requests`}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {older.length > 0
+                    ? older.map((r, i) => (
+                        <Box key={i}>
+                          <ListItemButton
+                            onClick={() => {
+                              getRequestBody(r.office, r.id);
+                              // @ts-ignore
+                              setDSubject(r.subject);
+                              // @ts-ignore
+                              setDOffice(r.office);
+                              setDDate(
+                                // @ts-ignore
+                                moment(new Date(r.requestDate)).format(
+                                  "MMM D, YYYY"
+                                )
+                              );
+                              // @ts-ignore
+                              setDOfficeEmail(emails[r.office]["email"]);
+                              setDStatus(r.status);
+                              setRequestOpen(true);
+                            }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar sx={styles.avatar}>
+                                {r.office // @ts-ignore
+                                  .toUpperCase()}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="body1"
+                                  fontWeight={500}
+                                  sx={{ textTransform: "capitalize" }}
+                                >
+                                  {
+                                    // @ts-ignore
+                                    r.subject
+                                  }
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  {"To: "}
+                                  <Typography variant="body2" component="span">
+                                    {emails[r.office]["name"]}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <Typography>
+                              {moment(
+                                new Date(
+                                  // @ts-ignore
+                                  r.requestDate
+                                )
+                              ).format("MMM D")}
+                            </Typography>
+                          </ListItemButton>
+                          <Divider />
+                        </Box>
+                      ))
+                    : null}
+                </List>
+              </AccordionDetails>
+            </Accordion>
           </Grid>
         </Grid>
         <Dialog
