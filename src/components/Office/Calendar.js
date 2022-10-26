@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import {
   Avatar,
+  Badge,
   Box,
   Card,
   CardContent,
@@ -20,7 +21,7 @@ import {
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+import "./Calendar.css";
 import { useState } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -126,16 +127,32 @@ const Schedule = () => {
     );
   };
 
-  const datesToAddContentTo = new Date();
+  const findRequestByDate = (_date) => {
+    const calendarDate = moment(_date).format("YYYY-MM-DD");
+    const filtered = schedules.filter((r) => {
+      // console.log(calendarDate);
+      const requestDate = moment(r.scheduleDate).format("YYYY-MM-DD");
+      if (requestDate === calendarDate) return true;
+      else return false;
+    });
+    return filtered;
+  };
+
   function tileContent({ activeStartDate, date, view }) {
-    const dateNowString = moment(datesToAddContentTo).format("YYYY-MM-DD");
-    const dateString = moment(date).format("YYYY-MM-DD");
     if (view === "month") {
-      // Check if a date React-Calendar wants to check is on the list of dates to add class to
-      // if (datesToAddContentTo.find((ddate) => ddate === date))
-      if (dateNowString === dateString)
-        return <Box sx={{ fontSize: 8 }}>Something</Box>;
-      else return;
+      const requests = findRequestByDate(date);
+
+      if (requests.length > 0)
+        return (
+          <Badge
+            sx={{ display: "block", fontSize: "0.7rem" }}
+          >{`${requests.length} schedules`}</Badge>
+        );
+      // if (requests.length > 0) {
+      //   return requests.map((r, i) => {
+      //     <Typography>1</Typography>;
+      //   });
+      // }
     }
   }
 
@@ -157,8 +174,17 @@ const Schedule = () => {
         >
           <Typography variant="h5">Calendar</Typography>
         </Box>
-        <Grid container sx={{ mt: 2 }} columnSpacing={1}>
-          <Grid item xs={12} md={6}>
+        <Grid container sx={{ mt: 2 }} rowSpacing={2}>
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+            <Box>
+              <Calendar
+                value={calendarValue}
+                onChange={calendarOnchange}
+                tileContent={tileContent}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
             <Typography
               variant="body1"
               sx={{ fontWeight: 600, textAlign: "center" }}
@@ -170,20 +196,6 @@ const Schedule = () => {
                 <ScheduleListItem s={s} key={i} />
               ))}
             </List>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{ display: "flex", justifyContent: "center" }}
-          >
-            <Box>
-              <Calendar
-                value={calendarValue}
-                onChange={calendarOnchange}
-                tileContent={tileContent}
-              />
-            </Box>
           </Grid>
         </Grid>
       </Paper>

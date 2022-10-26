@@ -49,6 +49,8 @@ const Pending = () => {
   const [dDate, setDDate] = useState("");
   // @ts-ignore
   const [dStatus, setDStatus] = useState("");
+  const [dSchedule, setDSchedule] = useState("");
+  const [dOfficeMessage, setDOfficeMessage] = useState("");
   const [requestBody, setRequestBody] = useState({});
 
   useEffect(() => {
@@ -107,6 +109,10 @@ const Pending = () => {
                               // @ts-ignore
                               setDOfficeEmail(emails[r.office]["email"]);
                               setDStatus(r.status);
+                              if (r.status !== "pending") {
+                                setDSchedule(r.scheduleDate);
+                                setDOfficeMessage(r.message);
+                              }
                               setRequestOpen(true);
                             }}
                           >
@@ -187,6 +193,10 @@ const Pending = () => {
                               // @ts-ignore
                               setDOfficeEmail(emails[r.office]["email"]);
                               setDStatus(r.status);
+                              if (r.status !== "pending") {
+                                setDSchedule(r.scheduleDate);
+                                setDOfficeMessage(r.message);
+                              }
                               setRequestOpen(true);
                             }}
                           >
@@ -267,6 +277,10 @@ const Pending = () => {
                               // @ts-ignore
                               setDOfficeEmail(emails[r.office]["email"]);
                               setDStatus(r.status);
+                              if (r.status !== "pending") {
+                                setDSchedule(r.scheduleDate);
+                                setDOfficeMessage(r.message);
+                              }
                               setRequestOpen(true);
                             }}
                           >
@@ -347,6 +361,10 @@ const Pending = () => {
                               // @ts-ignore
                               setDOfficeEmail(emails[r.office]["email"]);
                               setDStatus(r.status);
+                              if (r.status !== "pending") {
+                                setDSchedule(r.scheduleDate);
+                                setDOfficeMessage(r.message);
+                              }
                               setRequestOpen(true);
                             }}
                           >
@@ -459,6 +477,25 @@ const Pending = () => {
                       >
                         {dStatus}
                       </Typography>
+                      {dStatus !== "pending" ? (
+                        <Box sx={{ mt: 1 }}>
+                          {dStatus === "approved" ? (
+                            <Typography mb={1}>
+                              {" "}
+                              Schedule Date:{" "}
+                              <strong>
+                                {moment(dSchedule).format("MMMM D, YYYY")}
+                              </strong>
+                            </Typography>
+                          ) : null}
+
+                          <Typography mb={1}>
+                            {" "}
+                            Message from the Office:{" "}
+                            <strong>{dOfficeMessage}</strong>
+                          </Typography>
+                        </Box>
+                      ) : null}
                     </Typography>
                     <Divider />
                     <Box>

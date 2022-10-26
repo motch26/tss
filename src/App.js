@@ -34,8 +34,8 @@ function App() {
                 <Route index element={<OfficePending />} />
                 <Route path="calendar" element={<Schedule />} />
               </Route>
-              <Route path="q" element={<Link />} />
             </Route>
+            <Route path="/link" element={<Link />} />
           </Routes>
         </BrowserRouter>
       </LocalizationProvider>

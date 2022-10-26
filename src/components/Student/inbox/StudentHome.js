@@ -18,8 +18,6 @@ import {
   Drawer,
   Grid,
   IconButton,
-  List,
-  ListItemButton,
   MenuItem,
   Menu,
   Select,
@@ -39,12 +37,15 @@ import { Outlet, useNavigate } from "react-router-dom";
 import CIT from "./forms/CIT";
 import axios from "axios";
 import moment from "moment";
-
+import Mailjet from "node-mailjet";
+import emailAPICreds from "./../../../creds.json";
+import emails from "./../../../email.json";
 const StudentHome = () => {
   const [thisMonth, setThisMonth] = useState([]);
   const [lastMonth, setLastMonth] = useState([]);
   const [thisYear, setThisYear] = useState([]);
   const [older, setOlder] = useState([]);
+
   const getRequests = () => {
     axios
       .get(
@@ -113,10 +114,41 @@ const StudentHome = () => {
     navigate("/");
   };
 
+  const sendEmail = (office, subject, code) => {
+    const mailjet = new Mailjet({
+      apiKey: emailAPICreds.api_key,
+      apiSecret: emailAPICreds.secret_key,
+    });
+    const request = mailjet.post("send", { version: "v3.1" }).request({
+      Messages: [
+        {
+          From: {
+            Email: cookies.email,
+            Name: cookies.name,
+          },
+          To: [
+            {
+              Email: emails[office]["email"],
+              Name: emails[office]["name"],
+            },
+          ],
+          Subject: `New Request: ${subject.toUpperCase()}`,
+          TextPart: `You have a new request from a/an ${cookies.type} - ${cookies.name}`,
+          HTMLPart: `<h3><a href="https://localhost:3000/link?code=${code}"/>Click Me</a> to proceed in the request interface</h3>`,
+        },
+      ],
+    });
+
+    request
+      .then(({ body }) => console.log(body))
+      .catch((err) => console.log(err));
+  };
+
   const submit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     formData.append("userId", cookies.currentId);
+    formData.append("action", "new");
     if (formData.has("osaDateTime")) {
       const dateTimeStr = formData.get("osaDateTime");
 
@@ -133,6 +165,7 @@ const StudentHome = () => {
           setTo("");
           setCompose(false);
           setDisplaySnackbar(true);
+          sendEmail();
         }
       })
       .catch((err) => console.log(err));
@@ -282,6 +315,9 @@ const StudentHome = () => {
             >
               Compose Request
             </Button>
+            <Typography sx={{ ml: 2 }} variant="h6">
+              {cookies.name}
+            </Typography>
             <Tooltip title={cookies.given_name}>
               <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
                 <Avatar

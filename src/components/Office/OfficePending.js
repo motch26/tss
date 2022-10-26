@@ -582,14 +582,20 @@ const OfficePending = () => {
                         sx={{ mt: 3 }}
                       >
                         <Divider />
-                        <strong>Schedule Date:</strong>
-                        <DateTimePicker
-                          renderInput={(props) => (
-                            <TextField {...props} fullWidth />
-                          )}
-                          value={updatedDateTime}
-                          onChange={(val) => setUpdatedDateTime(val)}
-                        />
+                        {updatedStatus === "approved" ? (
+                          <Box>
+                            {" "}
+                            <strong>Schedule Date:</strong>
+                            <DateTimePicker
+                              renderInput={(props) => (
+                                <TextField {...props} fullWidth />
+                              )}
+                              value={updatedDateTime}
+                              onChange={(val) => setUpdatedDateTime(val)}
+                            />
+                          </Box>
+                        ) : null}
+
                         <strong>Additional Message:</strong>
                         <TextField
                           fullWidth
