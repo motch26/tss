@@ -1,4 +1,4 @@
-import { EventNote, Logout } from "@mui/icons-material";
+import { AutoGraph, EventNote, Logout, RateReview } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -43,6 +43,10 @@ const OfficeHome = () => {
   };
   const navigate = useNavigate();
 
+  const toGuidance = () => {
+    navigate("/office/home/guidance");
+  };
+
   return (
     <Box sx={styles.body}>
       <Menu
@@ -80,6 +84,21 @@ const OfficeHome = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
+        {cookies.office === "cit" || cookies.office === "bsis" ? (
+          <MenuItem onClick={() => toGuidance()}>
+            <ListItemIcon>
+              <RateReview fontSize="small" />
+            </ListItemIcon>
+            Request to Guidance Office
+          </MenuItem>
+        ) : null}
+
+        <MenuItem onClick={() => logout()}>
+          <ListItemIcon>
+            <AutoGraph fontSize="small" />
+          </ListItemIcon>
+          Analytics
+        </MenuItem>
         <MenuItem onClick={() => logout()}>
           <ListItemIcon>
             <Logout fontSize="small" />

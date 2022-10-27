@@ -115,29 +115,50 @@ const StudentHome = () => {
   };
 
   const sendEmail = (office, subject, code) => {
-    const mailjet = new Mailjet({
-      apiKey: emailAPICreds.api_key,
-      apiSecret: emailAPICreds.secret_key,
-    });
+    const mailjet = Mailjet.apiConnect(
+      emailAPICreds.api_key,
+      emailAPICreds.secret_key
+    );
     const request = mailjet.post("send", { version: "v3.1" }).request({
       Messages: [
         {
           From: {
-            Email: cookies.email,
-            Name: cookies.name,
+            Email: "motch26@gmail.com",
+            Name: "Motch",
           },
           To: [
             {
-              Email: emails[office]["email"],
-              Name: emails[office]["name"],
+              Email: "almark.duma-op@chmsu.edu.ph",
+              Name: "Almark",
             },
           ],
-          Subject: `New Request: ${subject.toUpperCase()}`,
-          TextPart: `You have a new request from a/an ${cookies.type} - ${cookies.name}`,
-          HTMLPart: `<h3><a href="https://localhost:3000/link?code=${code}"/>Click Me</a> to proceed in the request interface</h3>`,
+          Subject: "Sample Subject",
+          TextPart: "Sample text part",
+          HTMLPart:
+            '<h3>Dear passenger 1, welcome to <a href="https://www.mailjet.com/">Mailjet</a>!</h3><br />May the delivery force be with you!',
         },
       ],
     });
+
+    // const request = mailjet.post("send", { version: "v3.1" }).request({
+    //   Messages: [
+    //     {
+    //       From: {
+    //         Email: cookies.email,
+    //         Name: cookies.name,
+    //       },
+    //       To: [
+    //         {
+    //           Email: emails[office]["email"],
+    //           Name: emails[office]["name"],
+    //         },
+    //       ],
+    //       Subject: `New Request: ${subject.toUpperCase()}`,
+    //       TextPart: `You have a new request from a/an ${cookies.type} - ${cookies.name}`,
+    //       HTMLPart: `<h3><a href="https://localhost:3000/link?code=${code}"/>Click Me</a> to proceed in the request interface</h3>`,
+    //     },
+    //   ],
+    // });
 
     request
       .then(({ body }) => console.log(body))
@@ -165,7 +186,7 @@ const StudentHome = () => {
           setTo("");
           setCompose(false);
           setDisplaySnackbar(true);
-          sendEmail();
+          sendEmail(formData.get("office"), formData.get("subject"), data);
         }
       })
       .catch((err) => console.log(err));

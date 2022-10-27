@@ -10,5 +10,9 @@
   "osa": {
     "email": "almark.duma-op@chmsu.edu.ph",
     "name": "Office of the Students Affair"
+  },
+  "guidance": {
+    "email": "almark.duma-op@chmsu.edu.ph",
+    "name": "Guidance Office"
   }
 }
