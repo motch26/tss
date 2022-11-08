@@ -14,6 +14,7 @@ import Link from "./components/Office/Link";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import googleCreds from "./google.json";
 import Guidance from "./components/Office/Guidance";
+import Analytics from "./components/Office/Analytics";
 
 function App() {
   const { client_id } = googleCreds.web;
@@ -35,6 +36,7 @@ function App() {
                 <Route index element={<OfficePending />} />
                 <Route path="calendar" element={<Schedule />} />
                 <Route path="guidance" element={<Guidance />} />
+                <Route path="analytics" element={<Analytics />} />
               </Route>
             </Route>
             <Route path="/link" element={<Link />} />

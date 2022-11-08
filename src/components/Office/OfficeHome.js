@@ -46,6 +46,9 @@ const OfficeHome = () => {
   const toGuidance = () => {
     navigate("/office/home/guidance");
   };
+  const toAnalytics = () => {
+    navigate("/office/home/analytics");
+  };
 
   return (
     <Box sx={styles.body}>
@@ -93,7 +96,7 @@ const OfficeHome = () => {
           </MenuItem>
         ) : null}
 
-        <MenuItem onClick={() => logout()}>
+        <MenuItem onClick={() => toAnalytics()}>
           <ListItemIcon>
             <AutoGraph fontSize="small" />
           </ListItemIcon>

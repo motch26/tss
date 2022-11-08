@@ -10,6 +10,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   Grid,
   List,
   ListItemAvatar,
@@ -19,15 +20,106 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
+import moment from "moment";
 import React, { useState } from "react";
-
+import { useEffect } from "react";
+import { useCookies } from "react-cookie";
+import offices from "./../../email.json";
 const Guidance = () => {
+  const [requests, setRequests] = useState([]);
+  const [displayDialog, setDisplayDialog] = useState(false);
+  const [currentObj, setCurrentObj] = useState({});
+
+  const toTitleCase = (str) => {
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
   const [dialogOpen, setDialogOpen] = useState(false);
   const closeDialog = () => setDialogOpen(false);
+  const [cookies] = useCookies(["office"]);
+  const submit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    formData.append("office", cookies.office);
+    axios
+      .post("http://localhost/tss/api/guidanceRequest.php", formData)
+      .then(({ data }) => {
+        if (data) {
+          console.log(data);
+          getRequests();
+          closeDialog();
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+  const getRequests = () => {
+    axios
+      .get(
+        `http://localhost/tss/api/getGuidanceRequests.php?office=${cookies.office}`
+      )
+      .then(({ data }) => {
+        if (data) setRequests(data);
+      })
+      .catch((err) => console.log(err));
+  };
 
-  const submit = (e) => e.preventDefault();
+  useEffect(() => getRequests(), []);
+
   return (
     <>
+      {currentObj.hasOwnProperty("office") ? (
+        <Dialog
+          open={displayDialog}
+          maxWidth="sm"
+          fullWidth
+          onClose={() => setDisplayDialog(false)}
+        >
+          <DialogTitle
+            sx={{ bgcolor: "primary.main", color: "white", p: 1 }}
+          >{`From ${offices[currentObj.office]["name"]}`}</DialogTitle>
+          <DialogContent>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", py: 2, px: 1 }}
+            >
+              <Box sx={{ display: "flex" }}>
+                <strong>Student Name:</strong>
+                <Typography sx={{ ml: 3 }}>{currentObj.studentName}</Typography>
+              </Box>
+              <Divider />
+              <Box sx={{ display: "flex", mt: 1 }}>
+                <strong>Course, Year & Section:</strong>
+                <Typography sx={{ ml: 3 }}>{currentObj.section}</Typography>
+              </Box>
+              <Divider />
+
+              <Box sx={{ display: "flex", mt: 1 }}>
+                <strong>Schedule:</strong>
+                {currentObj.schedule ? (
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ ml: 3, fontWeight: 600 }}
+                  >
+                    {moment(currentObj.schedule).format("MMM DD, YYYY")}
+                  </Typography>
+                ) : (
+                  <Typography variant="subtitle1" sx={{ ml: 3 }}>
+                    Not yet scheduled
+                  </Typography>
+                )}
+              </Box>
+              <Divider />
+
+              <Box sx={{ display: "flex", mt: 1, flexDirection: "column" }}>
+                <strong>Additional Message:</strong>
+                <Typography sx={{ ml: 2 }}>{currentObj.message}</Typography>
+              </Box>
+            </Box>
+          </DialogContent>
+        </Dialog>
+      ) : null}
+
       <Dialog
         maxWidth="sm"
         fullWidth
@@ -37,21 +129,22 @@ const Guidance = () => {
         <DialogTitle sx={{ bgcolor: "primary.main", color: "white", p: 1 }}>
           Compose a Letter
         </DialogTitle>
-        <DialogContent>
-          <Box component="form" onSubmit={submit} sx={{ p: 1 }}>
+        <Box component="form" onSubmit={submit} sx={{}}>
+          <DialogContent>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
                 <strong>Student Name:</strong>
-                <TextField name="name" required fullWidth />
+                <TextField name="studentName" required fullWidth size="small" />
               </Grid>
               <Grid item xs={12} md={6}>
                 <strong>Course, Year & Section:</strong>
-                <TextField name="yearSection" required fullWidth />
+                <TextField name="section" required fullWidth size="small" />
               </Grid>
               <Grid item xs={12}>
                 <strong>Additional Message:</strong>
                 <TextField
                   name="message"
+                  size="small"
                   required
                   fullWidth
                   multiline
@@ -59,14 +152,14 @@ const Guidance = () => {
                 />
               </Grid>
             </Grid>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeDialog}>Cancel</Button>
-          <Button variant="contained" onClick={closeDialog}>
-            Submit
-          </Button>
-        </DialogActions>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeDialog}>Cancel</Button>
+            <Button variant="contained" type="submit">
+              Submit
+            </Button>
+          </DialogActions>
+        </Box>
       </Dialog>
       <Paper sx={styles.paper} elevation={10}>
         <Box
@@ -91,36 +184,36 @@ const Guidance = () => {
         </Box>
         <Box>
           <List dense>
-            <ListItemButton>
-              <ListItemAvatar>
-                <Avatar sx={{ bgcolor: "warning.main" }}>A</Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary="Student Name"
-                secondary="Course, Year & Section"
-              />
-              <Box sx={{}}>
-                <Chip
-                  size="small"
-                  label="June 26, 2022"
-                  sx={{ bgcolor: "success.main", color: "white" }}
+            {requests.map((r, i) => (
+              <ListItemButton
+                key={i}
+                onClick={() => {
+                  setCurrentObj(r);
+                  setDisplayDialog(true);
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: "warning.main" }}>
+                    {r.studentName.charAt(0).toUpperCase()}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={toTitleCase(r.studentName)}
+                  secondary={r.section}
                 />
-              </Box>
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemAvatar>
-                <Avatar sx={{ bgcolor: "warning.main" }}>A</Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary="Student Name"
-                secondary="Course, Year & Section"
-              />
-              <Box sx={{}}>
-                <Typography variant="caption">Not scheduled</Typography>
-              </Box>
-            </ListItemButton>
+                {r.schedule ? (
+                  <Chip
+                    size="small"
+                    label={moment(r.schedule).format("MMM DD")}
+                    sx={{ bgcolor: "success.main", color: "white" }}
+                  />
+                ) : (
+                  <Typography variant="caption">Not scheduled</Typography>
+                )}
+              </ListItemButton>
+            ))}
           </List>
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          {/* <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <ButtonGroup size="small">
               <Button variant="contained" startIcon={<ArrowLeft />}>
                 Prev
@@ -129,7 +222,7 @@ const Guidance = () => {
                 Next
               </Button>
             </ButtonGroup>
-          </Box>
+          </Box> */}
         </Box>
       </Paper>
     </>
