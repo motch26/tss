@@ -47,7 +47,6 @@ const Guidance = () => {
       .post("http://localhost/tss/api/guidanceRequest.php", formData)
       .then(({ data }) => {
         if (data) {
-          console.log(data);
           getRequests();
           closeDialog();
         }

@@ -139,6 +139,7 @@ const OfficeStart = () => {
               <MenuItem value="bsis">BSIS Program Chair</MenuItem>
               <MenuItem value="cit">CIT Dean's Office</MenuItem>
               <MenuItem value="osa">Office of the Students Affairs</MenuItem>
+              <MenuItem value="guidance">Guidance Office</MenuItem>
             </Select>
             <Box
               sx={{

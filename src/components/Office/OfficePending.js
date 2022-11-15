@@ -28,8 +28,14 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import moment from "moment";
+import emails from "./../../email.json";
 import { DateTimePicker } from "@mui/x-date-pickers";
 const OfficePending = () => {
+  const [isGuidance, setIsGuidance] = useState(false);
+  const [currentGuidanceObj, setCurrentGuidanceObj] = useState({
+    office: "",
+  });
+
   const [cookies] = useCookies(["office"]);
   const [isRequestOpen, setRequestOpen] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -94,9 +100,10 @@ const OfficePending = () => {
   };
 
   useEffect(() => {
+    if (cookies.office === "guidance") setIsGuidance(true);
     getRequests();
   }, []);
-  const getRequestBody = (id, office) => {
+  const getRequestBody = (id, office = null) => {
     axios
       .get(
         `http://localhost/tss/api/getRequestBody.php?id=${id}&office=${office}`
@@ -150,35 +157,44 @@ const OfficePending = () => {
   const ListItem = ({ r }) => {
     const [userInfo, setUserInfo] = useState({});
     useEffect(() => {
-      getUserInfo(r.userId).then((d) => setUserInfo(d.data));
+      if (!isGuidance) getUserInfo(r.userId).then((d) => setUserInfo(d.data));
     }, []);
 
     return (
       <Box>
         <ListItemButton
           onClick={() => {
-            getRequestBody(r.id, r.office);
-            setDID(r.id);
-            setDOffice(r.office);
-            // @ts-ignore
-            setDSubject(r.subject);
-            // @ts-ignore
-            setdSenderPicture(userInfo.picture); //picture key is still blank after render
-            // @ts-ignore
-            setDSenderName(userInfo.name); //name key is still blank after render
-            setDDate(
+            if (isGuidance) {
+              setCurrentGuidanceObj(r);
+            } else {
+              getRequestBody(r.id, r.office);
+
+              setDOffice(r.office);
               // @ts-ignore
-              moment(new Date(r.requestDate)).format("MMM D, YYYY")
-            );
-            // @ts-ignore
-            setdSenderEmail(userInfo.email);
-            setDStatus(r.status);
+              setDSubject(r.subject);
+              // @ts-ignore
+              setdSenderPicture(userInfo.picture); //picture key is still blank after render
+              // @ts-ignore
+              setDSenderName(userInfo.name); //name key is still blank after render
+              setDDate(
+                // @ts-ignore
+                moment(new Date(r.requestDate)).format("MMM D, YYYY")
+              );
+              // @ts-ignore
+              setdSenderEmail(userInfo.email);
+              setDStatus(r.status);
+            }
+            setDID(r.id);
             setRequestOpen(true);
           }}
         >
           <ListItemAvatar>
             <Avatar sx={styles.avatar}>
-              <img src={userInfo.picture} />
+              {isGuidance ? (
+                r.office.toUpperCase()
+              ) : (
+                <img src={userInfo.picture} />
+              )}
             </Avatar>
           </ListItemAvatar>
           <ListItemText
@@ -190,15 +206,14 @@ const OfficePending = () => {
               >
                 {
                   // @ts-ignore
-                  r.subject
+                  r.studentName
                 }
               </Typography>
             }
             secondary={
               <>
-                {"From: "}
                 <Typography variant="body2" component="span">
-                  {userInfo.name}
+                  {r.section}
                 </Typography>
               </>
             }
@@ -295,7 +310,7 @@ const OfficePending = () => {
                   Older
                 </Typography>
                 <Typography variant="subtitle2" sx={styles.summary}>
-                  {`${lastMonth.length} requests`}
+                  {`${older.length} requests`}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
@@ -324,7 +339,11 @@ const OfficePending = () => {
                   sx={styles.cardHeader}
                   avatar={
                     <Avatar sx={styles.avatar}>
-                      <img src={dSenderPicture} alt={dSenderName} />
+                      {isGuidance ? (
+                        currentGuidanceObj.office
+                      ) : (
+                        <img src={dSenderPicture} alt={dSenderName} />
+                      )}
                     </Avatar>
                   }
                   action={
@@ -332,7 +351,11 @@ const OfficePending = () => {
                       <Close />
                     </IconButton>
                   }
-                  title={`From: ${dSenderName}`}
+                  title={`From: ${
+                    isGuidance
+                      ? emails[currentGuidanceObj.office]["name"]
+                      : dSenderName
+                  }`}
                   subheader={dDate}
                 />
                 <CardContent>
