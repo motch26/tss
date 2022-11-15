@@ -60,7 +60,7 @@ const Pending = () => {
   const getRequestBody = (office, id) => {
     axios
       .get(
-        `http://localhost/tss/api/getRequestBody.php?office=${office}&id=${id}`
+        `https://tss.miracodes.com/api/getRequestBody.php?office=${office}&id=${id}`
       )
       .then(({ data }) => {
         if (data) setRequestBody(data);

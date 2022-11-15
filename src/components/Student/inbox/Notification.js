@@ -31,7 +31,9 @@ const Notification = () => {
 
   const getUpdates = () => {
     axios
-      .get(`http://localhost/tss/api/getUpdates.php?id=${cookies.currentId}`)
+      .get(
+        `https://tss.miracodes.com/api/getUpdates.php?id=${cookies.currentId}`
+      )
       .then(({ data }) => setUpdates(data))
       .catch((e) => console.log(e));
   };

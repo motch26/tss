@@ -49,7 +49,7 @@ const StudentHome = () => {
   const getRequests = () => {
     axios
       .get(
-        `http://localhost/tss/api/getRequests.php?currentId=${cookies.currentId}`
+        `https://tss.miracodes.com/api/getRequests.php?currentId=${cookies.currentId}`
       )
       .then(({ data }) => {
         // if (data) setRequests(data);
@@ -179,7 +179,7 @@ const StudentHome = () => {
       formData.append("osaDateTime", osaDateTime);
     }
     axios
-      .post("http://localhost/tss/api/compose.php", formData)
+      .post("https://tss.miracodes.com/api/compose.php", formData)
       .then(({ data }) => {
         if (data) {
           getRequests();

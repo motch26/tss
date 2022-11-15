@@ -53,7 +53,7 @@ const Schedule = () => {
   const getRequestBody = (id, office) => {
     axios
       .get(
-        `http://localhost/tss/api/getRequestBody.php?id=${id}&office=${office}`
+        `https://tss.miracodes.com/api/getRequestBody.php?id=${id}&office=${office}`
       )
       .then(({ data }) => {
         if (data) setRequestBody(data);
@@ -63,7 +63,7 @@ const Schedule = () => {
   const getRequests = () => {
     axios
       .get(
-        `http://localhost/tss/api/getRequests.php?office=${cookies.office}&schedule`
+        `https://tss.miracodes.com/api/getRequests.php?office=${cookies.office}&schedule`
       )
       .then(({ data }) => {
         setSchedules(data);
@@ -76,7 +76,7 @@ const Schedule = () => {
   const getUserInfo = async (id) => {
     try {
       const res = await axios.get(
-        `http://localhost/tss/api/getUserInfo.php?id=${id}`
+        `https://tss.miracodes.com/api/getUserInfo.php?id=${id}`
       );
       return res;
     } catch (error) {
@@ -192,9 +192,13 @@ const Schedule = () => {
               Upcoming Schedules
             </Typography>
             <List dense>
-              {schedules.map((s, i) => (
-                <ScheduleListItem s={s} key={i} />
-              ))}
+              {schedules.length ? (
+                schedules.map((s, i) => <ScheduleListItem s={s} key={i} />)
+              ) : (
+                <Typography textAlign="center" variant="h6">
+                  No upcoming schedules
+                </Typography>
+              )}
             </List>
           </Grid>
         </Grid>

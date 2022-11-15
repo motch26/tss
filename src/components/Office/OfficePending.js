@@ -67,7 +67,9 @@ const OfficePending = () => {
 
   const getRequests = () => {
     axios
-      .get(`http://localhost/tss/api/getRequests.php?office=${cookies.office}`)
+      .get(
+        `https://tss.miracodes.com/api/getRequests.php?office=${cookies.office}`
+      )
       .then(({ data }) => {
         const month = new Date().getMonth();
         const year = new Date().getFullYear();
@@ -106,7 +108,7 @@ const OfficePending = () => {
   const getRequestBody = (id, office = null) => {
     axios
       .get(
-        `http://localhost/tss/api/getRequestBody.php?id=${id}&office=${office}`
+        `https://tss.miracodes.com/api/getRequestBody.php?id=${id}&office=${office}`
       )
       .then(({ data }) => {
         if (data) setRequestBody(data);
@@ -117,7 +119,7 @@ const OfficePending = () => {
   const getUserInfo = async (id) => {
     try {
       const res = await axios.get(
-        `http://localhost/tss/api/getUserInfo.php?id=${id}`
+        `https://tss.miracodes.com/api/getUserInfo.php?id=${id}`
       );
       return res;
     } catch (error) {
@@ -136,7 +138,7 @@ const OfficePending = () => {
       moment(updatedDateTime).format("YYYY-MM-DD hh:mm:ss")
     );
     axios
-      .post("http://localhost/tss/api/updateRequest.php", formData)
+      .post("https://tss.miracodes.com/api/updateRequest.php", formData)
       .then(({ data }) => {
         if (data) {
           console.log(data);
@@ -204,16 +206,13 @@ const OfficePending = () => {
                 fontWeight={500}
                 sx={{ textTransform: "capitalize" }}
               >
-                {
-                  // @ts-ignore
-                  r.studentName
-                }
+                {isGuidance ? r.studentName : userInfo.name}
               </Typography>
             }
             secondary={
               <>
                 <Typography variant="body2" component="span">
-                  {r.section}
+                  {isGuidance ? r.section : r.subject}
                 </Typography>
               </>
             }

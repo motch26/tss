@@ -33,7 +33,7 @@ const Analytics = () => {
   const getRecordsByType = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost/tss/api/getRecordsByType.php?office=${cookies.office}`
+        `https://tss.miracodes.com/api/getRecordsByType.php?office=${cookies.office}`
       );
       // console.log(data[0]);
       setData({
