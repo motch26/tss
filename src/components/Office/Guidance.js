@@ -44,7 +44,7 @@ const Guidance = () => {
     const formData = new FormData(e.currentTarget);
     formData.append("office", cookies.office);
     axios
-      .post("https://tss.miracodes.com/api/guidanceRequest.php", formData)
+      .post(" https://tss.miracodes.com/api/guidanceRequest.php", formData)
       .then(({ data }) => {
         if (data) {
           getRequests();
@@ -56,7 +56,7 @@ const Guidance = () => {
   const getRequests = () => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getGuidanceRequests.php?office=${cookies.office}`
+        ` https://tss.miracodes.com/api/getGuidanceRequests.php?office=${cookies.office}`
       )
       .then(({ data }) => {
         if (data) setRequests(data);

@@ -12,7 +12,14 @@ import {
 } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
+import { useCookies } from "react-cookie";
+
 const OSA = () => {
+  const [cookies] = useCookies(["type"]);
+  const [osaYearLevel, setOsaYearLevel] = useState("");
+  const [osaCourse, setOsaCourse] = useState("");
+
+  const [osaSection, setOsaSection] = useState("");
   const [osaComplainant, setOsaComplainant] = useState("");
   const [osaRespondent, setOsaRespondent] = useState("");
   const [osaAcademicYr, setOsaAcademicYr] = useState(new Date().getFullYear());
@@ -52,6 +59,43 @@ const OSA = () => {
         Incident Report Form
       </Typography>
       <Grid container spacing={1}>
+        <Grid item xs={6}>
+          <strong>Year Level</strong>
+          <TextField
+            value={osaCourse}
+            onChange={(e) => setOsaCourse(e.target.value)}
+            fullWidth
+            name="course"
+          />
+        </Grid>
+        {cookies.type === "student" ? (
+          <>
+            <Grid item xs={6}>
+              <strong>Year Level</strong>
+              <Select
+                value={osaYearLevel}
+                onChange={(e) => setOsaYearLevel(e.target.value)}
+                fullWidth
+                name="yearLevel"
+              >
+                {[...Array(5).keys()].map((n) => (
+                  <MenuItem key={n + 1} value={n + 1}>
+                    {n + 1}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item xs={6}>
+              <strong>Section</strong>
+              <TextField
+                value={osaSection}
+                onChange={(e) => setOsaSection(e.target.value)}
+                fullWidth
+                name="section"
+              />
+            </Grid>
+          </>
+        ) : null}
         <Grid item xs={6}>
           <strong>Name of Complainant</strong>
           <TextField

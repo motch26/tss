@@ -49,10 +49,9 @@ const StudentHome = () => {
   const getRequests = () => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getRequests.php?currentId=${cookies.currentId}`
+        ` https://tss.miracodes.com/api/getRequests.php?currentId=${cookies.currentId}`
       )
       .then(({ data }) => {
-        // if (data) setRequests(data);
         const month = new Date().getMonth();
         const year = new Date().getFullYear();
         setThisMonth(
@@ -170,6 +169,13 @@ const StudentHome = () => {
     const formData = new FormData(e.currentTarget);
     formData.append("userId", cookies.currentId);
     formData.append("action", "new");
+    const officeEmail = emails[formData.get("office")]["email"];
+    const yearSection = `${formData.get("course")} ${formData.get(
+      "yearLevel"
+    )}-${formData.get("section")}`;
+    formData.append("officeEmail", officeEmail);
+    formData.append("senderName", cookies.name);
+    formData.append("yearSection", yearSection);
     if (formData.has("osaDateTime")) {
       const dateTimeStr = formData.get("osaDateTime");
 
@@ -179,14 +185,15 @@ const StudentHome = () => {
       formData.append("osaDateTime", osaDateTime);
     }
     axios
-      .post("https://tss.miracodes.com/api/compose.php", formData)
+      .post(" https://tss.miracodes.com/api/compose.php", formData)
       .then(({ data }) => {
+        console.log(data);
         if (data) {
           getRequests();
           setTo("");
           setCompose(false);
           setDisplaySnackbar(true);
-          sendEmail(formData.get("office"), formData.get("subject"), data);
+          // sendEmail(formData.get("office"), formData.get("subject"), data);
         }
       })
       .catch((err) => console.log(err));

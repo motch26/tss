@@ -25,19 +25,27 @@ ChartJS.register(
 );
 const Analytics = () => {
   const [cookies] = useCookies(["office"]);
-  const [_data, setData] = useState({
+  const [bar1Data, setBar1Data] = useState({
     labels: [],
+    datasets: [],
+  });
+  const [bar2Data, setBar2Data] = useState({
+    labels: ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"],
+    datasets: [],
+  });
+  const [bar3Data, setBar3Data] = useState({
+    labels: ["Student", "Alumnus", "Visitor"],
     datasets: [],
   });
   const monthNumbers = Array.from(Array(12).keys());
   const getRecordsByType = async () => {
     try {
       const { data } = await axios.get(
-        `https://tss.miracodes.com/api/getRecordsByType.php?office=${cookies.office}`
+        ` https://tss.miracodes.com/api/getRecordsByType.php?office=${cookies.office}`
       );
       // console.log(data[0]);
-      setData({
-        labels: monthNumbers.map((m) => moment().month(m).format("MMMM")),
+      setBar1Data({
+        labels: monthNumbers.map((m) => moment().month(m).format("MMM")),
         datasets: [
           // @ts-ignore
           {
@@ -47,7 +55,7 @@ const Analytics = () => {
               if (obj !== undefined) return obj.COUNT;
               else return 0;
             }),
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
+            backgroundColor: "rgba(183, 200, 206, 1)",
           },
           // @ts-ignore
           {
@@ -57,7 +65,7 @@ const Analytics = () => {
               if (obj !== undefined) return obj.COUNT;
               else return 0;
             }),
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
+            backgroundColor: "rgba(116, 237, 100, 1)",
           },
           // @ts-ignore
           {
@@ -67,7 +75,7 @@ const Analytics = () => {
               if (obj !== undefined) return obj.COUNT;
               else return 0;
             }),
-            backgroundColor: "rgba(160, 180, 235, 0.5)",
+            backgroundColor: "rgba(242, 173, 95, 1)",
           },
         ],
       });
@@ -79,12 +87,64 @@ const Analytics = () => {
       console.log(error);
     }
   };
+  const getRecordsByLevel = async () => {
+    const yearLevelArr = [...Array(5).keys()];
+    try {
+      const { data } = await axios.get(
+        ` https://tss.miracodes.com/api/getRecordsByYearLevel.php?office=${cookies.office}`
+      );
+
+      setBar2Data({
+        labels: ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"],
+        datasets: [
+          // @ts-ignore
+          {
+            label: "Total Requests",
+            data: yearLevelArr.map((y) => {
+              const obj = data.find((d) => d.yearLevel == y + 1);
+              if (obj !== undefined) return obj.count;
+              else return 0;
+            }),
+            backgroundColor: "rgba(183, 200, 206, 1)",
+          },
+        ],
+      });
+    } catch (error) {}
+  };
+  const getRecordsByUser = async () => {
+    const typeArr = ["alumnus", "student", "visitor"];
+    try {
+      const { data } = await axios.get(
+        ` https://tss.miracodes.com/api/getRecordsByUser.php?office=${cookies.office}`
+      );
+
+      setBar3Data({
+        labels: ["Alumnus", "Student", "Visitor"],
+        datasets: [
+          // @ts-ignore
+          {
+            label: "Total Requests",
+            data: typeArr.map((y) => {
+              const obj = data.find((d) => d.type == y);
+              if (obj !== undefined) return obj.count;
+              else return 0;
+            }),
+            backgroundColor: "rgba(183, 200, 206, 1)",
+          },
+        ],
+      });
+    } catch (error) {}
+  };
 
   useEffect(() => {
-    const fetchData = async () => await getRecordsByType();
+    const fetchData = async () => {
+      await getRecordsByType();
+      await getRecordsByLevel();
+      await getRecordsByUser();
+    };
     fetchData();
   }, []);
-  const options = {
+  const bar1Options = {
     responsive: true,
     plugins: {
       legend: {
@@ -96,6 +156,30 @@ const Analytics = () => {
       },
     },
   };
+  const bar2Options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Total Requests per Year Level",
+      },
+    },
+  };
+  const bar3Options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Total Requests per User Type",
+      },
+    },
+  };
 
   return (
     <Paper sx={styles.paper} elevation={10}>
@@ -104,7 +188,13 @@ const Analytics = () => {
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Bar options={options} data={_data} />
+          <Bar options={bar1Options} data={bar1Data} />
+        </Grid>
+        <Grid item xs={12}>
+          <Bar options={bar2Options} data={bar2Data} />
+        </Grid>
+        <Grid item xs={12}>
+          <Bar options={bar3Options} data={bar3Data} />
         </Grid>
       </Grid>
     </Paper>

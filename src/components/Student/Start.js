@@ -74,7 +74,7 @@ const StudentStart = () => {
     formData.append("userId", userId);
     formData.append("picture", picture);
     axios
-      .post("https://tss.miracodes.com/api/checkUser.php", formData)
+      .post(" https://tss.miracodes.com/api/checkUser.php", formData)
       .then(({ data }) => {
         if (data) {
           setIndividualCookie("currentId", data);

@@ -3,16 +3,7 @@ import {
   Avatar,
   Badge,
   Box,
-  Button,
-  ButtonGroup,
-  Card,
-  CardContent,
-  CardHeader,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Divider,
-  IconButton,
   List,
   ListItemAvatar,
   ListItem,
@@ -32,7 +23,7 @@ const Notification = () => {
   const getUpdates = () => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getUpdates.php?id=${cookies.currentId}`
+        ` https://tss.miracodes.com/api/getUpdates.php?id=${cookies.currentId}`
       )
       .then(({ data }) => setUpdates(data))
       .catch((e) => console.log(e));

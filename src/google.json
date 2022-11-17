@@ -12,6 +12,6 @@
       "http://localhost:3000",
       "http://localhost:3000/office"
     ],
-    "javascript_origins": ["https://tss.miracodes.com", "http://localhost:3000"]
+    "javascript_origins": ["http://localhost/tss", "http://localhost:3000"]
   }
 }

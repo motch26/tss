@@ -32,9 +32,7 @@ import emails from "./../../email.json";
 import { DateTimePicker } from "@mui/x-date-pickers";
 const OfficePending = () => {
   const [isGuidance, setIsGuidance] = useState(false);
-  const [currentGuidanceObj, setCurrentGuidanceObj] = useState({
-    office: "",
-  });
+  const [currentGuidanceObj, setCurrentGuidanceObj] = useState(null);
 
   const [cookies] = useCookies(["office"]);
   const [isRequestOpen, setRequestOpen] = useState(false);
@@ -54,7 +52,7 @@ const OfficePending = () => {
   const [dSenderEmail, setdSenderEmail] = useState("");
   const [dSenderName, setDSenderName] = useState("");
   const [dSenderPicture, setdSenderPicture] = useState("");
-
+  const [dContact, setDContact] = useState("");
   // @ts-ignore
   const [dDate, setDDate] = useState("");
   // @ts-ignore
@@ -68,7 +66,7 @@ const OfficePending = () => {
   const getRequests = () => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getRequests.php?office=${cookies.office}`
+        ` https://tss.miracodes.com/api/getRequests.php?office=${cookies.office}`
       )
       .then(({ data }) => {
         const month = new Date().getMonth();
@@ -108,7 +106,7 @@ const OfficePending = () => {
   const getRequestBody = (id, office = null) => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getRequestBody.php?id=${id}&office=${office}`
+        ` https://tss.miracodes.com/api/getRequestBody.php?id=${id}&office=${office}`
       )
       .then(({ data }) => {
         if (data) setRequestBody(data);
@@ -119,7 +117,7 @@ const OfficePending = () => {
   const getUserInfo = async (id) => {
     try {
       const res = await axios.get(
-        `https://tss.miracodes.com/api/getUserInfo.php?id=${id}`
+        ` https://tss.miracodes.com/api/getUserInfo.php?id=${id}`
       );
       return res;
     } catch (error) {
@@ -137,12 +135,34 @@ const OfficePending = () => {
       "updatedDateTime",
       moment(updatedDateTime).format("YYYY-MM-DD hh:mm:ss")
     );
+    if (isGuidance) formData.append("guidance", true);
+
     axios
-      .post("https://tss.miracodes.com/api/updateRequest.php", formData)
-      .then(({ data }) => {
+      .post(` https://tss.miracodes.com/api/updateRequest.php`, formData)
+      .then(async ({ data }) => {
         if (data) {
-          console.log(data);
           closeDialog();
+          const formData = new FormData();
+          formData.append("number", dContact);
+          formData.append(
+            "message",
+            `Request Subject: ${dSubject}\nRequest Status: ${updatedStatus}\n${
+              updatedStatus === "approved"
+                ? `Schedule Date: ${updatedDateTime.toString().toUpperCase()}`
+                : ""
+            }\nAdditional Message: ${updatedMessage}
+              `
+          );
+
+          try {
+            const { data } = await axios.post(
+              " https://tss.miracodes.com/api/sms.php",
+              formData
+            );
+            console.log(data);
+          } catch (error) {
+            console.log(error);
+          }
         }
       })
       .catch((err) => console.log(err));
@@ -170,7 +190,7 @@ const OfficePending = () => {
               setCurrentGuidanceObj(r);
             } else {
               getRequestBody(r.id, r.office);
-
+              setDContact(r.contact);
               setDOffice(r.office);
               // @ts-ignore
               setDSubject(r.subject);
@@ -338,8 +358,8 @@ const OfficePending = () => {
                   sx={styles.cardHeader}
                   avatar={
                     <Avatar sx={styles.avatar}>
-                      {isGuidance ? (
-                        currentGuidanceObj.office
+                      {isGuidance && currentGuidanceObj ? (
+                        currentGuidanceObj.office.toUpperCase()
                       ) : (
                         <img src={dSenderPicture} alt={dSenderName} />
                       )}
@@ -351,45 +371,100 @@ const OfficePending = () => {
                     </IconButton>
                   }
                   title={`From: ${
-                    isGuidance
+                    isGuidance && currentGuidanceObj
                       ? emails[currentGuidanceObj.office]["name"]
                       : dSenderName
                   }`}
-                  subheader={dDate}
+                  subheader={
+                    isGuidance && currentGuidanceObj
+                      ? moment(currentGuidanceObj.requestDate).fromNow()
+                      : dDate
+                  }
                 />
                 <CardContent>
                   <Box sx={styles.requestBody}>
                     <Typography mb={1} sx={{ textTransform: "capitalize" }}>
-                      Subject: <strong>{dSubject}</strong>
+                      {isGuidance && currentGuidanceObj ? (
+                        <>
+                          Student Name:{" "}
+                          <strong>{currentGuidanceObj.studentName}</strong>
+                        </>
+                      ) : (
+                        <>
+                          {" "}
+                          Subject: <strong>{dSubject}</strong>
+                        </>
+                      )}
+                    </Typography>
+                    {isGuidance && currentGuidanceObj ? (
+                      <Typography mb={1} sx={{ textTransform: "capitalize" }}>
+                        Section: <strong>{currentGuidanceObj.section}</strong>
+                      </Typography>
+                    ) : null}
+                    <Typography mb={1}>
+                      {isGuidance && currentGuidanceObj ? (
+                        <>
+                          {" "}
+                          Office Email:{" "}
+                          <strong>
+                            {emails[currentGuidanceObj.office]["email"]}
+                          </strong>
+                        </>
+                      ) : (
+                        <>
+                          {" "}
+                          Sender Email: <strong>{dSenderEmail}</strong>
+                        </>
+                      )}
                     </Typography>
                     <Typography mb={1}>
                       {" "}
-                      Sender Email: <strong>{dSenderEmail}</strong>
-                    </Typography>
-                    <Typography mb={1}>
-                      {" "}
-                      Date of Transaction: <strong>{dDate}</strong>
+                      Date of Transaction:{" "}
+                      <strong>
+                        {isGuidance && currentGuidanceObj
+                          ? moment(currentGuidanceObj.requestDate).format(
+                              "MMM DD, YYYY hh:MM A"
+                            )
+                          : dDate}
+                      </strong>
                     </Typography>
                     <Typography mb={1}>
                       Status:
-                      <Typography
-                        component="span"
-                        variant="subtitle2"
-                        sx={{
-                          bgcolor: updatedStatus
-                            ? updatedStatus === "approved"
+                      {isGuidance ? (
+                        <Typography
+                          component="span"
+                          variant="subtitle2"
+                          sx={{
+                            bgcolor: updatedStatus
                               ? "success.main"
-                              : "error.main"
-                            : "secondary.main",
-                          px: 1,
-                          ml: 1,
-                          textTransform: "capitalize",
-                          color:
-                            updatedStatus === "rejected" ? "white" : "black ",
-                        }}
-                      >
-                        {updatedStatus !== "" ? updatedStatus : dStatus}
-                      </Typography>
+                              : "secondary.main",
+                            px: 1,
+                            ml: 1,
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {updatedStatus !== "" ? "Approved" : "Pending"}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          component="span"
+                          variant="subtitle2"
+                          sx={{
+                            bgcolor: updatedStatus
+                              ? updatedStatus === "approved"
+                                ? "success.main"
+                                : "error.main"
+                              : "secondary.main",
+                            px: 1,
+                            ml: 1,
+                            textTransform: "capitalize",
+                            color:
+                              updatedStatus === "rejected" ? "white" : "black ",
+                          }}
+                        >
+                          {updatedStatus !== "" ? updatedStatus : dStatus}
+                        </Typography>
+                      )}
                     </Typography>
                     <Divider />
                     {dOffice === "cit" ? (
@@ -581,19 +656,21 @@ const OfficePending = () => {
                           setButtonClicked(true);
                         }}
                       >
-                        Approve
+                        {isGuidance ? "Set Schedule" : "Approve"}
                       </Button>
-                      <Button
-                        startIcon={<Dangerous />}
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setUpdatedStatus("rejected");
-                          setButtonClicked(true);
-                        }}
-                      >
-                        Decline
-                      </Button>
+                      {isGuidance ? null : (
+                        <Button
+                          startIcon={<Dangerous />}
+                          variant="outlined"
+                          color="error"
+                          onClick={() => {
+                            setUpdatedStatus("rejected");
+                            setButtonClicked(true);
+                          }}
+                        >
+                          Decline
+                        </Button>
+                      )}
                     </Box>
                   </Box>
                   <Box sx={{ mt: 2 }}>

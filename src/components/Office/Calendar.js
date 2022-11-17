@@ -26,7 +26,9 @@ import { useState } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import moment from "moment";
+import emails from "./../../email.json";
 const Schedule = () => {
+  const [isGuidance, setIsGuidance] = useState(false);
   const now = new Date();
   const [cookies] = useCookies(["office"]);
   const [calendarValue, calendarOnchange] = useState(now);
@@ -53,7 +55,7 @@ const Schedule = () => {
   const getRequestBody = (id, office) => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getRequestBody.php?id=${id}&office=${office}`
+        ` https://tss.miracodes.com/api/getRequestBody.php?id=${id}&office=${office}`
       )
       .then(({ data }) => {
         if (data) setRequestBody(data);
@@ -63,7 +65,7 @@ const Schedule = () => {
   const getRequests = () => {
     axios
       .get(
-        `https://tss.miracodes.com/api/getRequests.php?office=${cookies.office}&schedule`
+        ` https://tss.miracodes.com/api/getRequests.php?office=${cookies.office}&schedule`
       )
       .then(({ data }) => {
         setSchedules(data);
@@ -71,12 +73,13 @@ const Schedule = () => {
   };
 
   useEffect(() => {
+    if (cookies.office === "guidance") setIsGuidance(true);
     getRequests();
   }, []);
   const getUserInfo = async (id) => {
     try {
       const res = await axios.get(
-        `https://tss.miracodes.com/api/getUserInfo.php?id=${id}`
+        ` https://tss.miracodes.com/api/getUserInfo.php?id=${id}`
       );
       return res;
     } catch (error) {
@@ -85,39 +88,53 @@ const Schedule = () => {
   };
 
   const ScheduleListItem = ({ s }) => {
-    const { name, subject, scheduleDate, id, userId, office, requestDate } = s;
+    const {
+      name,
+      subject,
+      scheduleDate,
+      id,
+      userId,
+      office,
+      requestDate,
+      studentName,
+      section,
+    } = s;
     const [userInfo, setUserInfo] = useState({});
     useEffect(() => {
-      getUserInfo(userId).then((d) => setUserInfo(d.data));
+      if (!isGuidance) getUserInfo(userId).then((d) => setUserInfo(d.data));
     }, []);
 
     return (
       <Box>
         <ListItemButton
           onClick={() => {
-            getRequestBody(id, office);
-            setDID(id);
-            setDScheduleData(
-              moment(new Date(scheduleDate)).format("MMM D, YYYY hh:mm A")
-            );
-            setDOffice(office);
-            // @ts-ignore
-            setDSubject(subject);
-            // @ts-ignore
-            setdSenderPicture(userInfo.picture); //picture key is still blank after render
-            // @ts-ignore
-            setDSenderName(userInfo.name); //name key is still blank after render
-            setDDate(
+            if (!isGuidance) {
+              getRequestBody(id, office);
+              setDID(id);
+              setDScheduleData(
+                moment(new Date(scheduleDate)).format("MMM D, YYYY hh:mm A")
+              );
+              setDOffice(office);
               // @ts-ignore
-              moment(new Date(requestDate)).format("MMM D, YYYY")
-            );
-            // @ts-ignore
-            setdSenderEmail(userInfo.email);
-
-            setRequestOpen(true);
+              setDSubject(subject);
+              // @ts-ignore
+              setdSenderPicture(userInfo.picture); //picture key is still blank after render
+              // @ts-ignore
+              setDSenderName(userInfo.name); //name key is still blank after render
+              setDDate(
+                // @ts-ignore
+                moment(new Date(requestDate)).format("MMM D, YYYY")
+              );
+              // @ts-ignore
+              setdSenderEmail(userInfo.email);
+              setRequestOpen(true);
+            }
           }}
         >
-          <ListItemText primary={name} secondary={subject} />
+          <ListItemText
+            primary={isGuidance ? emails[s.office]["name"] : name}
+            secondary={isGuidance ? section : subject}
+          />
           <Typography variant="body2">
             {moment(scheduleDate).format("MMM D")}{" "}
           </Typography>
