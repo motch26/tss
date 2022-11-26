@@ -87,7 +87,9 @@ const OfficeHome = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {cookies.office === "cit" || cookies.office === "bsis" ? (
+        {cookies.office === "cit" ||
+        cookies.office === "bsis" ||
+        cookies.office === "osa" ? (
           <MenuItem onClick={() => toGuidance()}>
             <ListItemIcon>
               <RateReview fontSize="small" />

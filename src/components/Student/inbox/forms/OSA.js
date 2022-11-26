@@ -60,7 +60,7 @@ const OSA = () => {
       </Typography>
       <Grid container spacing={1}>
         <Grid item xs={6}>
-          <strong>Year Level</strong>
+          <strong>Course</strong>
           <TextField
             value={osaCourse}
             onChange={(e) => setOsaCourse(e.target.value)}

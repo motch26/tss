@@ -25,6 +25,7 @@ ChartJS.register(
 );
 const Analytics = () => {
   const [cookies] = useCookies(["office"]);
+  const [isGuidance, setIsGuidance] = useState(false);
   const [bar1Data, setBar1Data] = useState({
     labels: [],
     datasets: [],
@@ -37,8 +38,17 @@ const Analytics = () => {
     labels: ["Student", "Alumnus", "Visitor"],
     datasets: [],
   });
-  const monthNumbers = Array.from(Array(12).keys());
+  const [guidanceBar1Data, setGuidanceBar1Data] = useState({
+    labels: [],
+    datasets: [],
+  });
+  const [guidanceBar2Data, setGuidanceBar2Data] = useState({
+    labels: ["CIT Office", "BSIS Office", "OSA"],
+    datasets: [],
+  });
+
   const getRecordsByType = async () => {
+    const monthNumbers = Array.from(Array(12).keys());
     try {
       const { data } = await axios.get(
         ` https://tss.miracodes.com/api/getRecordsByType.php?office=${cookies.office}`
@@ -136,11 +146,91 @@ const Analytics = () => {
     } catch (error) {}
   };
 
+  const getGuidanceRecordsByType = async () => {
+    const monthNumbers = Array.from(Array(12).keys());
+    try {
+      const { data } = await axios.get(
+        ` https://tss.miracodes.com/api/getGuidanceRecordsByType.php`
+      );
+      console.log(data);
+      setGuidanceBar1Data({
+        labels: monthNumbers.map((m) => moment().month(m).format("MMM")),
+        datasets: [
+          // @ts-ignore
+          {
+            label: "CIT Office",
+            data: monthNumbers.map((m) => {
+              const obj = data[0].find((d) => d.MONTH == m + 1);
+              if (obj !== undefined) return obj.COUNT;
+              else return 0;
+            }),
+            backgroundColor: "rgba(183, 200, 206, 1)",
+          },
+          // @ts-ignore
+          {
+            label: "BSIS Office",
+            data: monthNumbers.map((m) => {
+              const obj = data[1].find((d) => d.MONTH == m + 1);
+              if (obj !== undefined) return obj.COUNT;
+              else return 0;
+            }),
+            backgroundColor: "rgba(116, 237, 100, 1)",
+          },
+          // @ts-ignore
+          {
+            label: "OSA",
+            data: monthNumbers.map((m) => {
+              const obj = data[2].find((d) => d.MONTH == m + 1);
+              if (obj !== undefined) return obj.COUNT;
+              else return 0;
+            }),
+            backgroundColor: "rgba(242, 173, 95, 1)",
+          },
+        ],
+      });
+
+      // setStudentCounts(data[0]);
+      // setAlumniCounts(data[1]);
+      // setVisitorsCounts(data[2]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getGuidanceTotalRecords = async () => {
+    const typeArr = ["cit", "bsis", "osa"];
+    try {
+      const { data } = await axios.get(
+        ` https://tss.miracodes.com/api/getGuidanceTotalRecords.php`
+      );
+
+      setGuidanceBar2Data({
+        labels: ["CIT Office", "BSIS Office", "OSA"],
+        datasets: [
+          // @ts-ignore
+          {
+            label: "Total Requests",
+            data: typeArr.map((y) => {
+              const obj = data.find((d) => d.office == y);
+              if (obj !== undefined) return obj.count;
+              else return 0;
+            }),
+            backgroundColor: "rgba(183, 200, 206, 1)",
+          },
+        ],
+      });
+    } catch (error) {}
+  };
   useEffect(() => {
+    if (cookies.office === "guidance") setIsGuidance(true);
     const fetchData = async () => {
-      await getRecordsByType();
-      await getRecordsByLevel();
-      await getRecordsByUser();
+      if (cookies.office === "guidance") {
+        await getGuidanceRecordsByType();
+        await getGuidanceTotalRecords();
+      } else {
+        await getRecordsByType();
+        await getRecordsByLevel();
+        await getRecordsByUser();
+      }
     };
     fetchData();
   }, []);
@@ -180,6 +270,30 @@ const Analytics = () => {
       },
     },
   };
+  const guidanceBar1Options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Requests per Office (monthly)",
+      },
+    },
+  };
+  const guidanceBar2Options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Total Requests per Office",
+      },
+    },
+  };
 
   return (
     <Paper sx={styles.paper} elevation={10}>
@@ -187,15 +301,28 @@ const Analytics = () => {
         <Typography variant="h5">Analytics</Typography>
       </Box>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Bar options={bar1Options} data={bar1Data} />
-        </Grid>
-        <Grid item xs={12}>
-          <Bar options={bar2Options} data={bar2Data} />
-        </Grid>
-        <Grid item xs={12}>
-          <Bar options={bar3Options} data={bar3Data} />
-        </Grid>
+        {isGuidance ? (
+          <>
+            <Grid item xs={12}>
+              <Bar options={guidanceBar1Options} data={guidanceBar1Data} />
+            </Grid>
+            <Grid item xs={12}>
+              <Bar options={guidanceBar2Options} data={guidanceBar2Data} />
+            </Grid>
+          </>
+        ) : (
+          <>
+            <Grid item xs={12}>
+              <Bar options={bar1Options} data={bar1Data} />
+            </Grid>
+            <Grid item xs={12}>
+              <Bar options={bar2Options} data={bar2Data} />
+            </Grid>
+            <Grid item xs={12}>
+              <Bar options={bar3Options} data={bar3Data} />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Paper>
   );

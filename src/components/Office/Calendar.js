@@ -33,7 +33,6 @@ const Schedule = () => {
   const [cookies] = useCookies(["office"]);
   const [calendarValue, calendarOnchange] = useState(now);
   const [schedules, setSchedules] = useState([]);
-  const [offset, setOffset] = useState(0);
 
   const [isRequestOpen, setRequestOpen] = useState(false);
   // @ts-ignore
@@ -51,7 +50,6 @@ const Schedule = () => {
   // @ts-ignore
   const [dDate, setDDate] = useState("");
   // @ts-ignore
-  const [dStatus, setDStatus] = useState("");
   const getRequestBody = (id, office) => {
     axios
       .get(
@@ -96,7 +94,7 @@ const Schedule = () => {
       userId,
       office,
       requestDate,
-      studentName,
+      schedule,
       section,
     } = s;
     const [userInfo, setUserInfo] = useState({});
@@ -136,7 +134,7 @@ const Schedule = () => {
             secondary={isGuidance ? section : subject}
           />
           <Typography variant="body2">
-            {moment(scheduleDate).format("MMM D")}{" "}
+            {moment(isGuidance ? schedule : scheduleDate).format("MMM D")}{" "}
           </Typography>
         </ListItemButton>
         <Divider />
@@ -146,12 +144,22 @@ const Schedule = () => {
 
   const findRequestByDate = (_date) => {
     const calendarDate = moment(_date).format("YYYY-MM-DD");
-    const filtered = schedules.filter((r) => {
-      // console.log(calendarDate);
-      const requestDate = moment(r.scheduleDate).format("YYYY-MM-DD");
-      if (requestDate === calendarDate) return true;
-      else return false;
-    });
+    let filtered = [];
+    if (isGuidance) {
+      filtered = schedules.filter((r) => {
+        // console.log(calendarDate);
+        const requestDate = moment(r.schedule).format("YYYY-MM-DD");
+        if (requestDate === calendarDate) return true;
+        else return false;
+      });
+    } else {
+      filtered = schedules.filter((r) => {
+        // console.log(calendarDate);
+        const requestDate = moment(r.scheduleDate).format("YYYY-MM-DD");
+        if (requestDate === calendarDate) return true;
+        else return false;
+      });
+    }
     return filtered;
   };
 

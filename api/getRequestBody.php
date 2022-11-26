@@ -17,8 +17,6 @@ switch ($office) {
     $query = $conn->query("SELECT * FROM bsisrequests WHERE requestId = $id");
     $row = $query->fetch(PDO::FETCH_OBJ);
     break;
-  default:
-    echo json_encode($row);
 }
 
 echo json_encode($row);

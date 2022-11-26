@@ -63,7 +63,6 @@ const Pending = () => {
         ` https://tss.miracodes.com/api/getRequestBody.php?office=${office}&id=${id}`
       )
       .then(({ data }) => {
-        console.log(data);
         if (data) setRequestBody(data);
       })
       .catch((err) => console.log(err));

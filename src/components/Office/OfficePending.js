@@ -159,7 +159,6 @@ const OfficePending = () => {
               " https://tss.miracodes.com/api/sms.php",
               formData
             );
-            console.log(data);
           } catch (error) {
             console.log(error);
           }

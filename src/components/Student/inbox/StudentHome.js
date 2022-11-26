@@ -187,7 +187,6 @@ const StudentHome = () => {
     axios
       .post(" https://tss.miracodes.com/api/compose.php", formData)
       .then(({ data }) => {
-        console.log(data);
         if (data) {
           getRequests();
           setTo("");
